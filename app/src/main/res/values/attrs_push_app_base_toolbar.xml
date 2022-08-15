@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PushAppBaseToolbar">
+        <attr name="leftIcon" format="reference"/>
+        <attr name="rightIcon" format="reference"/>
+        <attr name="title" format="string"/>
+        <attr name="titleColor" format="color"/>
+        <attr name="toolbarBackgroundColor" format="color"/>
+        <attr name="hasLeftIcon" format="boolean"/>
+        <attr name="hasRightIcon" format="boolean"/>
+        <attr name="leftIconColor" format="color"/>
+        <attr name="rightIconColor" format="color"/>
+    </declare-styleable>
+
+</resources>
