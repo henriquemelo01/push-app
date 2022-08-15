@@ -4,10 +4,11 @@
 
 <div >
     <h2>👀<b>Overview</b></h2><br>
-    <img  src = "./public/pomodoro-v1.gif" />
 </div>
 
 O PushApp consiste em uma aplicação Android desenvolvida para o trabalho de conclusão do curso de Engenharia de Controle e Automação. 
+
+![arquitetura_push_app_tcc](https://user-images.githubusercontent.com/43918283/184653258-4f04909d-2422-43c4-bbd0-40019ad3adef.jpeg)
 
 ## Funcionalidades
 
