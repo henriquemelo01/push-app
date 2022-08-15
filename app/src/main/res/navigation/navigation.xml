@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/loginFragment">
+
+    <action
+        android:id="@+id/action_global_to_training_configuration_fragment"
+        app:destination="@id/trainingConfigurationFragment" />
+
+    <action
+        android:id="@+id/action_global_to_workout_fragment"
+        app:destination="@id/workoutFragment" />
+
+    <action
+        android:id="@+id/action_global_to_detailed_report_fragment"
+        app:destination="@id/detailedReportFragment" />
+
+    <fragment
+        android:id="@+id/trainingConfigurationFragment"
+        android:name="com.example.pushapp.ui.training_configuration.TrainingConfigurationFragment"
+        android:label="TrainingConfigurationFragment"
+        tools:layout="@layout/fragment_training_configuration">
+
+        <action
+            android:id="@+id/action_to_menu"
+            app:destination="@id/menuFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right"
+            app:popUpTo="@id/trainingConfigurationFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.example.pushapp.ui.menu.MenuFragment"
+        android:label="MenuFragment"
+        tools:layout="@layout/fragment_menu">
+        <action
+            android:id="@+id/action_menuFragment_to_reportsHistoryFragment"
+            app:destination="@id/reportsHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workoutFragment"
+        android:name="com.example.pushapp.ui.workout.WorkoutFragment"
+        android:label="WorkoutFragment"
+        tools:layout="@layout/fragment_workout">
+
+        <argument
+            android:name="workoutConfigModel"
+            app:argType="com.example.pushapp.models.WorkoutConfigurationModel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.pushapp.ui.login.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_trainingConfigurationFragment"
+            app:destination="@id/trainingConfigurationFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_registerUserFragment"
+            app:destination="@id/registerUserFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerUserFragment"
+        android:name="com.example.pushapp.ui.register.RegisterUserFragment"
+        android:label="RegisterUserFragment"
+        tools:layout="@layout/fragment_register_user">
+        <action
+            android:id="@+id/action_registerUserFragment_to_trainingConfigurationFragment"
+            app:destination="@id/trainingConfigurationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailedReportFragment"
+        android:name="com.example.pushapp.ui.detailed_report.DetailedReportFragment"
+        android:label="DetailedReportFragment"
+        tools:layout="@layout/fragment_detailed_report">
+        <argument
+            android:name="reportModel"
+            app:argType="com.example.pushapp.models.ReportModel" />
+        <argument
+            android:name="accesedBy"
+            app:argType="com.example.pushapp.models.detailed_report.AccesedBy" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reportsHistoryFragment"
+        android:name="com.example.pushapp.ui.reports_history.ReportsHistoryFragment"
+        android:label="ReportsHistoryFragment"
+        tools:layout="@layout/fragment_reports_history" />
+
+</navigation>

@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Push App</string>
+    <string name="spinner_exercise_label">Exercício</string>
+    <string name="report_exercise_description">Exercício realizado</string>
+    <string name="spinner_training_methodology">Metodologia de Treinamento</string>
+    <string name="bt_start_training">Iniciar</string>
+    <string name="number_of_sets">Número de Séries</string>
+    <string name="weight">Peso</string>
+    <string name="report_history">Histórico de Relatórios</string>
+    <string name="velocity">Velocidade</string>
+    <string name="mean_velocity">Velocidade Média</string>
+    <string name="force">Força</string>
+    <string name="mean_force">Força Média</string>
+    <string name="mean_power">Potência Média</string>
+    <string name="empty_data_label">-</string>
+    <string name="device_connected_status_text">%1$s - %2$s</string>
+    <string name="velocity_data_label">%1$.2f meters per second [m/s]</string>
+    <string name="force_data_label">%1$d kilogram-force [kgf]</string>
+    <string name="workout_weight_label">[ %1$dKG ]</string>
+    <string name="velocity_wheel_label">%1$.2f m/s</string>
+
+    <string-array name="exercise_list">
+        <item>Treino Livre</item>
+        <item>Barra Guiada</item>
+    </string-array>
+
+    <string name="email">Email</string>
+    <string name="login_screen_title">Push App</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register">Registrar</string>
+    <string name="authenticated_screen">Authenticated Screen</string>
+    <string name="user_authenticated_label">Usuario Autentificado: %s</string>
+    <string name="create_account">Criar Conta</string>
+    <string name="confirmar_password">Confirmar password</string>
+    <string name="passwords_were_different">Os passwords estão distintos</string>
+    <string name="detailed_report_title">Relatório Detalhado (%1$s)</string>
+</resources>
