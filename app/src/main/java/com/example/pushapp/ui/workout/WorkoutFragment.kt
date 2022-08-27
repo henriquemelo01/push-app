@@ -84,7 +84,6 @@ class WorkoutFragment : BluetoothHandlerFragment() {
                         .makeText(requireContext(), "Exiber relatório clicado", Toast.LENGTH_SHORT)
                         .show()
 
-                    // incluido em 31/07
                     viewModel.navigateToDetailedReportFragment()
                 }
 
@@ -104,7 +103,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
             binding.ctWorkoutScreenTitle.title = it
         }
 
-        weight.observe(viewLifecycleOwner) {
+        weightData.observe(viewLifecycleOwner) {
             binding.tvWorkoutWeight.text = getString(R.string.workout_weight_label, it)
         }
 
@@ -126,12 +125,15 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
         velocityData.observe(viewLifecycleOwner) {
 
+            println("VelocityData: $it")
+
             binding.tvVelocityWheelData.text = getString(R.string.velocity_wheel_label, it)
 
             binding.tvVelocityData.text = getString(R.string.velocity_data_label, it)
 
             viewModel.saveData(BLE_VELOCITY_CHARACTERISTIC_UUID, it)
 
+            // esta relacionado ao offset characteristic
             binding.progressBar.apply {
                 progress = (it * 100).toInt()
                 max = 100
@@ -162,12 +164,24 @@ class WorkoutFragment : BluetoothHandlerFragment() {
                 if (entries.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
-        dummyIntegerVariableData.observe(viewLifecycleOwner) {
+        weightData.observe(viewLifecycleOwner) {
             binding.tvForceData.text = getString(R.string.force_data_label, it)
         }
 
-        dummyIntegerVariableData.observe(viewLifecycleOwner) {
-            println("Dummy Integer Data: $it")
+        offsetData.observe(viewLifecycleOwner) {
+            println("OffsetData: $it")
+        }
+
+        forceData.observe(viewLifecycleOwner) {
+            println("ForceData: $it")
+        }
+
+        accelerationData.observe(viewLifecycleOwner) {
+            println("AccelerationData: $it")
+        }
+
+        powerData.observe(viewLifecycleOwner) {
+            println("PowerData: $it")
         }
 
         flowObserver(viewModel.statusDevice) { connectionStatus ->

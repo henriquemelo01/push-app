@@ -8,9 +8,14 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_CHARACTERISTIC_TX_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_ACCELERATION_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_FORCE_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_OFFSET_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_POWER_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_WEIGHT_CHARACTERISTIC_UUID
 import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_SERVICE_UUID
 import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_VELOCITY_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.SECOND_WORKOUT_BLE_SERVICE
 import com.example.pushapp.utils.flowObserver
 import com.welie.blessed.*
 
@@ -102,15 +107,39 @@ abstract class BluetoothHandlerFragment : Fragment() {
         object : BluetoothPeripheralCallback() {
             override fun onServicesDiscovered(peripheral: BluetoothPeripheral) {
                 with(peripheral) {
-                    // integer (xxx) -> dummyNumberOfRepetitions
-                    getCharacteristic(BLE_SERVICE_UUID, BLE_CHARACTERISTIC_TX_UUID)?.let {
-                        setNotify(it, true)
-                    }
 
-                    // float (x.xx) -> dummyVelocity ou dummyAcceleration
-                    getCharacteristic(BLE_SERVICE_UUID, BLE_VELOCITY_CHARACTERISTIC_UUID)?.let {
-                        setNotify(it, true)
-                    }
+                    getCharacteristic(
+                        BLE_SERVICE_UUID,
+                        BLE_WEIGHT_CHARACTERISTIC_UUID
+                    )
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
+
+                    getCharacteristic(BLE_SERVICE_UUID, BLE_VELOCITY_CHARACTERISTIC_UUID)
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
+
+                    getCharacteristic(BLE_SERVICE_UUID, BLE_OFFSET_CHARACTERISTIC_UUID)
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
+
+                    getCharacteristic(
+                        SECOND_WORKOUT_BLE_SERVICE,
+                        BLE_FORCE_CHARACTERISTIC_UUID
+                    )
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
+
+                    getCharacteristic(BLE_SERVICE_UUID, BLE_POWER_CHARACTERISTIC_UUID)
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
+
+                    getCharacteristic(
+                        SECOND_WORKOUT_BLE_SERVICE,
+                        BLE_ACCELERATION_CHARACTERISTIC_UUID
+                    )
+                        ?.takeIf { it.descriptors.isNotEmpty() }
+                        ?.let { setNotify(it, true) }
                 }
             }
 
@@ -151,14 +180,31 @@ abstract class BluetoothHandlerFragment : Fragment() {
                 characteristic: BluetoothGattCharacteristic,
                 status: GattStatus
             ) {
-                if (characteristic.uuid == BLE_CHARACTERISTIC_TX_UUID)
-                    viewModel.notifyCharacteristicDataChange(BLE_CHARACTERISTIC_TX_UUID, value)
-                else if (characteristic.uuid == BLE_VELOCITY_CHARACTERISTIC_UUID) {
-                    viewModel.notifyCharacteristicDataChange(
-                        BLE_VELOCITY_CHARACTERISTIC_UUID,
-                        value
+                when (characteristic.uuid) {
+                    BLE_VELOCITY_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_VELOCITY_CHARACTERISTIC_UUID,
+                        data = value
                     )
-
+                    BLE_WEIGHT_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_WEIGHT_CHARACTERISTIC_UUID,
+                        data = value
+                    )
+                    BLE_OFFSET_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_OFFSET_CHARACTERISTIC_UUID,
+                        data = value
+                    )
+                    BLE_FORCE_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_FORCE_CHARACTERISTIC_UUID,
+                        data = value
+                    )
+                    BLE_ACCELERATION_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_ACCELERATION_CHARACTERISTIC_UUID,
+                        data = value
+                    )
+                    BLE_POWER_CHARACTERISTIC_UUID -> viewModel.notifyCharacteristicDataChange(
+                        characteristicId = BLE_POWER_CHARACTERISTIC_UUID,
+                        data = value
+                    )
                 }
             }
         }

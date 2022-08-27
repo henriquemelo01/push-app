@@ -27,6 +27,7 @@ class WorkoutViewModel(
         emit(workoutConfigModel.trainingMethodology.value)
     }
 
+    // Será removido -> Input de Massa
     val weight = liveData {
         emit(workoutConfigModel.weight)
     }
@@ -48,6 +49,7 @@ class WorkoutViewModel(
     private val _velocityEntries = MutableLiveData<MutableList<Entry>>()
     val velocityEntries: LiveData<MutableList<Entry>> get() = _velocityEntries
 
+    // Será substituido pelo offset
     private val _dummyIntegerEntries = MutableLiveData<MutableList<Entry>>()
     val dummyIntegerEntries get() = MutableLiveData<MutableList<Entry>>()
 
@@ -83,12 +85,12 @@ class WorkoutViewModel(
                 _velocityEntries.value =
                     connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]
 
-            } else if (characteristicId == BLE_CHARACTERISTIC_TX_UUID) {
+            } else if (characteristicId == BLE_WEIGHT_CHARACTERISTIC_UUID) {
 
                 add(Entry(timeDiffInSeconds.toFloat(), data.toFloat()))
 
                 _dummyIntegerEntries.value =
-                    connectedDeviceCharacteristics[BLE_CHARACTERISTIC_TX_UUID]
+                    connectedDeviceCharacteristics[BLE_WEIGHT_CHARACTERISTIC_UUID]
             }
         }
     }

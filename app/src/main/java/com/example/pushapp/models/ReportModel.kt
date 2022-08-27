@@ -14,8 +14,8 @@ data class ReportModel(
     val offsetMovements: List<Offset> = listOf(),
     val meanVelocity: Float = 0f,
     val meanPower: Float = 0f,
-    val meanForce: Float = 0f, // + numberOfRepetitions: Int ??
-    val userId: String = "",// + createdAt -> timestamp
+    val meanForce: Float = 0f,
+    val userId: String = "",
     val createdAt: Long? = null
 ) : Parcelable
 

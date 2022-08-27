@@ -44,10 +44,22 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     val connectionFailedESP32Event get() = _connectionFailedESP32Event.asSharedFlow()
 
     private val _velocityNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
-    private val velocityNotificationCharUpdateEvent get() = _velocityNotificationCharUpdateEvent.asSharedFlow()
+    val velocityNotificationCharUpdateEvent get() = _velocityNotificationCharUpdateEvent.asSharedFlow()
 
-    private val _dummyCharNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
-    private val dummyCharNotificationCharUpdateEvent get() = _dummyCharNotificationCharUpdateEvent.asSharedFlow()
+    private val _weightNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
+    val weightNotificationCharUpdateEvent get() = _weightNotificationCharUpdateEvent.asSharedFlow()
+
+    private val _offsetNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
+    val offsetNotificationCharUpdateEvent get() = _offsetNotificationCharUpdateEvent.asSharedFlow()
+
+    private val _forceNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
+    val forceNotificationCharUpdateEvent get() = _forceNotificationCharUpdateEvent.asSharedFlow()
+
+    private val _accelerationNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
+    val accelerationNotificationCharUpdateEvent get() = _accelerationNotificationCharUpdateEvent.asSharedFlow()
+
+    private val _powerNotificationCharUpdateEvent = MutableSharedFlow<Boolean>()
+    val powerNotificationCharUpdateEvent get() = _powerNotificationCharUpdateEvent.asSharedFlow()
 
     private val _failedToSetNotificationEvent = MutableSharedFlow<UUID>()
     val failedToSetNotificationEvent get() = _failedToSetNotificationEvent.asSharedFlow()
@@ -57,8 +69,20 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     protected val _velocityData = MutableLiveData<Float>()
     val velocityData: LiveData<Float> get() = _velocityData
 
-    private val _dummyIntegerVariableData = MutableLiveData<Int>()
-    val dummyIntegerVariableData: LiveData<Int> = _dummyIntegerVariableData
+    private val _weightData = MutableLiveData<Int>()
+    val weightData: LiveData<Int> = _weightData
+
+    private val _offsetData = MutableLiveData<Int>()
+    val offsetData: LiveData<Int> = _offsetData
+
+    private val _forceData = MutableLiveData<Int>()
+    val forceData: LiveData<Int> = _forceData
+
+    private val _accelerationData = MutableLiveData<Float>()
+    val accelerationData: LiveData<Float> = _accelerationData
+
+    private val _powerData = MutableLiveData<Int>()
+    val powerData: LiveData<Int> = _powerData
 
     fun onDiscoveredPeripheral(peripheral: BluetoothPeripheral) {
 
@@ -106,18 +130,50 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
         characteristic: BluetoothGattCharacteristic,
         isNotifying: Boolean
     ) = viewModelScope.launch {
+        when (characteristic.uuid) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> {
+                _velocityNotificationCharUpdateEvent.emit(isNotifying)
 
-        if (characteristic.uuid == BLE_VELOCITY_CHARACTERISTIC_UUID) {
-            _velocityNotificationCharUpdateEvent.emit(isNotifying)
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID] =
+                        mutableListOf()
+            }
 
-            if (isNotifying)
-                connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID] = mutableListOf()
+            BLE_WEIGHT_CHARACTERISTIC_UUID -> {
+                _weightNotificationCharUpdateEvent.emit(isNotifying)
 
-        } else if (characteristic.uuid == BLE_CHARACTERISTIC_TX_UUID) {
-            _dummyCharNotificationCharUpdateEvent.emit(isNotifying)
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_WEIGHT_CHARACTERISTIC_UUID] = mutableListOf()
+            }
 
-            if (isNotifying)
-                connectedDeviceCharacteristics[BLE_CHARACTERISTIC_TX_UUID] = mutableListOf()
+            BLE_OFFSET_CHARACTERISTIC_UUID -> {
+                _offsetNotificationCharUpdateEvent.emit(isNotifying)
+
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_OFFSET_CHARACTERISTIC_UUID] = mutableListOf()
+            }
+
+            BLE_FORCE_CHARACTERISTIC_UUID -> {
+                _forceNotificationCharUpdateEvent.emit(isNotifying)
+
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID] = mutableListOf()
+            }
+
+            BLE_ACCELERATION_CHARACTERISTIC_UUID -> {
+                _accelerationNotificationCharUpdateEvent.emit(isNotifying)
+
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_ACCELERATION_CHARACTERISTIC_UUID] =
+                        mutableListOf()
+            }
+
+            BLE_POWER_CHARACTERISTIC_UUID -> {
+                _powerNotificationCharUpdateEvent.emit(isNotifying)
+
+                if (isNotifying)
+                    connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID] = mutableListOf()
+            }
         }
     }
 
@@ -126,22 +182,42 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     }
 
     fun notifyCharacteristicDataChange(characteristicId: UUID, data: ByteArray) {
-        if (characteristicId == BLE_VELOCITY_CHARACTERISTIC_UUID)
-            _velocityData.value = data.processFloatData()
-        else if (characteristicId == BLE_CHARACTERISTIC_TX_UUID)
-            _dummyIntegerVariableData.value = data.processIntegerData()
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> _velocityData.value = data.processFloatData()
+            BLE_WEIGHT_CHARACTERISTIC_UUID -> _weightData.value = data.processIntegerData()
+            BLE_OFFSET_CHARACTERISTIC_UUID -> _offsetData.value = data.processIntegerData()
+            BLE_ACCELERATION_CHARACTERISTIC_UUID -> _accelerationData.value =
+                data.processFloatData()
+            BLE_FORCE_CHARACTERISTIC_UUID -> _forceData.value = data.processIntegerData()
+            BLE_POWER_CHARACTERISTIC_UUID -> _powerData.value = data.processIntegerData()
+        }
     }
 
     companion object {
         const val ESP_32_MAC_ADDRESS = "CC:50:E3:95:BA:A2"
 
         val BLE_SERVICE_UUID: UUID = UUID.fromString("f8ab3678-b2b6-11ec-b909-0242ac120002")
+        val SECOND_WORKOUT_BLE_SERVICE: UUID =
+            UUID.fromString("86f12c7f-1d2c-44a1-b1a6-30a264c15dc4")
 
-        val BLE_CHARACTERISTIC_TX_UUID: UUID =
+        val BLE_WEIGHT_CHARACTERISTIC_UUID: UUID =
             UUID.fromString("f8ab3a6a-b2b6-11ec-b909-0242ac120002")
 
         val BLE_VELOCITY_CHARACTERISTIC_UUID: UUID =
             UUID.fromString("9a3843fe-ed19-11ec-8ea0-0242ac120002")
+
+        val BLE_OFFSET_CHARACTERISTIC_UUID: UUID =
+            UUID.fromString("cf4e2566-14a1-4d71-84ad-96eebd5b9bc3")
+
+        val BLE_FORCE_CHARACTERISTIC_UUID: UUID = UUID.fromString(
+            "20abb7fa-52a0-486b-a5f1-91fe12236c3a"
+        )
+
+        val BLE_POWER_CHARACTERISTIC_UUID: UUID =
+            UUID.fromString("69454f3f-f575-4f59-87dd-42ce3207ddbf")
+
+        val BLE_ACCELERATION_CHARACTERISTIC_UUID: UUID =
+            UUID.fromString("d89f2437-86c0-4d8c-9c21-8a39e600827d")
     }
 }
 
