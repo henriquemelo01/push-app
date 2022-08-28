@@ -7,15 +7,27 @@
 
     <action
         android:id="@+id/action_global_to_training_configuration_fragment"
-        app:destination="@id/trainingConfigurationFragment" />
+        app:destination="@id/trainingConfigurationFragment"
+        app:enterAnim="@anim/slide_in_from_right"
+        app:exitAnim="@anim/slide_out_to_left"
+        app:popEnterAnim="@anim/slide_in_from_left"
+        app:popExitAnim="@anim/slide_out_to_right" />
 
     <action
         android:id="@+id/action_global_to_workout_fragment"
-        app:destination="@id/workoutFragment" />
+        app:destination="@id/workoutFragment"
+        app:enterAnim="@anim/slide_in_from_right"
+        app:exitAnim="@anim/slide_out_to_left"
+        app:popEnterAnim="@anim/slide_in_from_left"
+        app:popExitAnim="@anim/slide_out_to_right" />
 
     <action
         android:id="@+id/action_global_to_detailed_report_fragment"
-        app:destination="@id/detailedReportFragment" />
+        app:destination="@id/detailedReportFragment"
+        app:enterAnim="@anim/slide_in_from_right"
+        app:exitAnim="@anim/slide_out_to_left"
+        app:popEnterAnim="@anim/slide_in_from_left"
+        app:popExitAnim="@anim/slide_out_to_right" />
 
     <fragment
         android:id="@+id/trainingConfigurationFragment"
@@ -41,7 +53,11 @@
         tools:layout="@layout/fragment_menu">
         <action
             android:id="@+id/action_menuFragment_to_reportsHistoryFragment"
-            app:destination="@id/reportsHistoryFragment" />
+            app:destination="@id/reportsHistoryFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
     </fragment>
 
     <fragment
@@ -62,11 +78,19 @@
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_trainingConfigurationFragment"
-            app:destination="@id/trainingConfigurationFragment" />
+            app:destination="@id/trainingConfigurationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
 
         <action
             android:id="@+id/action_loginFragment_to_registerUserFragment"
-            app:destination="@id/registerUserFragment" />
+            app:destination="@id/registerUserFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
     </fragment>
 
     <fragment
@@ -76,7 +100,11 @@
         tools:layout="@layout/fragment_register_user">
         <action
             android:id="@+id/action_registerUserFragment_to_trainingConfigurationFragment"
-            app:destination="@id/trainingConfigurationFragment" />
+            app:destination="@id/trainingConfigurationFragment"
+            app:enterAnim="@anim/slide_in_from_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
     </fragment>
 
     <fragment
