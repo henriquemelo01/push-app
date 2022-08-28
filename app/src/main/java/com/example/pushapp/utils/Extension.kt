@@ -8,6 +8,8 @@ import kotlinx.coroutines.launch
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -66,14 +68,17 @@ fun ByteArray.processFloatData(): Float {
     return "${hexStringData[1]}.${hexStringData[5]}${hexStringData[7]}".toFloat()
 }
 
-fun LineChart.setupStyle() = this.apply {
+fun LineChart.setupStyle(
+    minValue: Float = 0f,
+    maxValue: Float = 1.2f
+) = this.apply {
 
     axisRight.isEnabled = false
 
     axisLeft.apply {
         isEnabled = true
-        axisMinimum = 0f
-        axisMaximum = 1.2f
+        axisMinimum = minValue
+        axisMaximum = maxValue
     }
 
     xAxis.apply {
@@ -89,21 +94,22 @@ fun LineChart.setupStyle() = this.apply {
     enableScroll()
 }
 
-fun LineDataSet.setupStyle(context: Context) = this.apply {
-    mode = LineDataSet.Mode.CUBIC_BEZIER
+fun LineDataSet.setupStyle(context: Context, @ColorRes lineColor: Int = R.color.dark_wine) =
+    this.apply {
+        mode = LineDataSet.Mode.CUBIC_BEZIER
 
-    setDrawValues(false)
+        setDrawValues(false)
 
-    lineWidth = 3f
+        lineWidth = 3f
 
-    isHighlightEnabled = true
+        isHighlightEnabled = true
 
-    setDrawHighlightIndicators(false)
+        setDrawHighlightIndicators(false)
 
-    setDrawCircles(false)
+        setDrawCircles(false)
 
-    color = ContextCompat.getColor(context, R.color.dark_wine)
-}
+        color = ContextCompat.getColor(context, lineColor)
+    }
 
 fun TextInputLayout.checkErrorState(wasError: Boolean) = apply {
     if (wasError)
