@@ -44,7 +44,13 @@ class WorkoutViewModel(
 
     private var velocityNotificationStartTime = 0L
 
-    private var integerVariableNotificationStartTime = 0L
+    private var offsetNotificationStartTime = 0L
+
+    private var forceNotificationStartTime = 0L
+
+    private var powerNotificationStartTime = 0L
+
+    private var accelerationNotificationStartTime = 0L
 
     private val _velocityEntries = MutableLiveData<MutableList<Entry>>()
     val velocityEntries: LiveData<MutableList<Entry>> get() = _velocityEntries
@@ -70,19 +76,16 @@ class WorkoutViewModel(
             connectedDeviceCharacteristics[characteristicId]?.isEmpty() ?: false
 
         if (wasFirstNotification) {
-            if (characteristicId == BLE_VELOCITY_CHARACTERISTIC_UUID)
-                velocityNotificationStartTime = Calendar.getInstance().time.time
-            else
-                integerVariableNotificationStartTime = Calendar.getInstance().time.time
+            setCharNotificationStartTime(
+                characteristicId = characteristicId,
+                startTime = Calendar.getInstance().time.time
+            )
         }
 
         val currentTime = Calendar.getInstance().time.time
 
         val timeDiffInSeconds =
-            if (characteristicId == BLE_VELOCITY_CHARACTERISTIC_UUID) TimeUnit.MILLISECONDS.toSeconds(
-                currentTime - velocityNotificationStartTime
-            )
-            else TimeUnit.MILLISECONDS.toSeconds(currentTime - integerVariableNotificationStartTime)
+            getTimeDiffInSeconds(characteristicId = characteristicId, currentTime = currentTime)
 
         connectedDeviceCharacteristics.saveCharacteristicDataPerTime(
             characteristicId = characteristicId,
@@ -90,6 +93,34 @@ class WorkoutViewModel(
             timeDiffInSeconds = timeDiffInSeconds
         )
     }
+
+    private fun setCharNotificationStartTime(characteristicId: UUID, startTime: Long) = when (characteristicId) {
+        BLE_VELOCITY_CHARACTERISTIC_UUID -> velocityNotificationStartTime = startTime
+        BLE_OFFSET_CHARACTERISTIC_UUID -> offsetNotificationStartTime = startTime
+        BLE_FORCE_CHARACTERISTIC_UUID -> forceNotificationStartTime = startTime
+        BLE_POWER_CHARACTERISTIC_UUID -> powerNotificationStartTime = startTime
+        else -> accelerationNotificationStartTime = startTime
+    }
+
+    private fun getTimeDiffInSeconds(characteristicId: UUID, currentTime: Long): Long =
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toSeconds(
+                currentTime - velocityNotificationStartTime
+            )
+            BLE_OFFSET_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toSeconds(
+                currentTime - offsetNotificationStartTime
+            )
+            BLE_FORCE_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toSeconds(
+                currentTime - forceNotificationStartTime
+            )
+            BLE_POWER_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toSeconds(
+                currentTime - powerNotificationStartTime
+            )
+            else -> TimeUnit.MILLISECONDS.toSeconds(
+                currentTime - accelerationNotificationStartTime
+            )
+        }
+
 
     private fun MutableMap<UUID, MutableList<Entry>>.saveCharacteristicDataPerTime(
         characteristicId: UUID,
@@ -118,7 +149,7 @@ class WorkoutViewModel(
             ReportModel(
                 exercise = workoutConfigModel.exercise,
                 trainingMethodology = workoutConfigModel.trainingMethodology,
-                weight = workoutConfigModel.weight,
+                weight = weightData.value ?: 0,
                 offsetMovements = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.map {
                     Offset(
                         timestamp = it.x.toLong(),
