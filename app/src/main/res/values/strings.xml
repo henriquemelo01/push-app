@@ -16,6 +16,7 @@
     <string name="device_connected_status_text">%1$s - %2$s</string>
     <string name="velocity_data_label">%1$.2f meters per second [m/s]</string>
     <string name="force_data_label">%1$d kilogram-force [kgf]</string>
+    <string name="mean_force_data_label">%1$.2f meters per second [m/s]</string>
     <string name="workout_weight_label">[ %1$dKG ]</string>
     <string name="velocity_wheel_label">%1$.2f m/s</string>
 
@@ -35,4 +36,7 @@
     <string name="confirmar_password">Confirmar password</string>
     <string name="passwords_were_different">Os passwords estão distintos</string>
     <string name="detailed_report_title">Relatório Detalhado (%1$s)</string>
+    <string name="informative_weight_message">Lembre-se de inserir a carga utilizada no teclado númerico antes de iniciar o treino.</string>
+    <string name="smith_machine">Barra Guiada</string>
+    <string name="velocity_based_training">VBT</string>
 </resources>
