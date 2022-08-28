@@ -15,6 +15,10 @@ import com.example.pushapp.R
 import com.example.pushapp.databinding.FragmentWorkoutBinding
 import com.example.pushapp.models.BluetoothConnectionStatus
 import com.example.pushapp.models.detailed_report.AccesedBy
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_ACCELERATION_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_FORCE_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_OFFSET_CHARACTERISTIC_UUID
+import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_POWER_CHARACTERISTIC_UUID
 import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_VELOCITY_CHARACTERISTIC_UUID
 import com.example.pushapp.utils.flowObserver
 import com.example.pushapp.utils.setupStyle
@@ -131,13 +135,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
             binding.tvVelocityData.text = getString(R.string.velocity_data_label, it)
 
-            viewModel.saveData(BLE_VELOCITY_CHARACTERISTIC_UUID, it)
-
-            // esta relacionado ao offset characteristic
-            binding.progressBar.apply {
-                progress = (it * 100).toInt()
-                max = 100
-            }
+            saveData(characteristicId = BLE_VELOCITY_CHARACTERISTIC_UUID, data = it)
         }
 
         showBarPositionContainer.observe(viewLifecycleOwner) { shouldShowBarPosition ->
@@ -157,6 +155,8 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
                 data = LineData(dataSet)
 
+                data.notifyDataChanged()
+                notifyDataSetChanged()
                 invalidate()
             }
 
@@ -164,24 +164,28 @@ class WorkoutFragment : BluetoothHandlerFragment() {
                 if (entries.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
-        weightData.observe(viewLifecycleOwner) {
-            binding.tvForceData.text = getString(R.string.force_data_label, it)
-        }
-
         offsetData.observe(viewLifecycleOwner) {
-            println("OffsetData: $it")
+            binding.progressBar.apply {
+                progress = it
+                max = 100
+            }
+
+            saveData(characteristicId = BLE_OFFSET_CHARACTERISTIC_UUID, data = it)
         }
 
         forceData.observe(viewLifecycleOwner) {
-            println("ForceData: $it")
+            binding.tvForceData.text = getString(R.string.force_data_label, it)
+            saveData(characteristicId = BLE_FORCE_CHARACTERISTIC_UUID, data = it)
         }
 
         accelerationData.observe(viewLifecycleOwner) {
             println("AccelerationData: $it")
+            saveData(characteristicId = BLE_ACCELERATION_CHARACTERISTIC_UUID, data = it)
         }
 
         powerData.observe(viewLifecycleOwner) {
             println("PowerData: $it")
+            saveData(characteristicId = BLE_POWER_CHARACTERISTIC_UUID, data = it)
         }
 
         flowObserver(viewModel.statusDevice) { connectionStatus ->

@@ -49,9 +49,17 @@ class WorkoutViewModel(
     private val _velocityEntries = MutableLiveData<MutableList<Entry>>()
     val velocityEntries: LiveData<MutableList<Entry>> get() = _velocityEntries
 
-    // Será substituido pelo offset
-    private val _dummyIntegerEntries = MutableLiveData<MutableList<Entry>>()
-    val dummyIntegerEntries get() = MutableLiveData<MutableList<Entry>>()
+    private val _offsetEntries = MutableLiveData<MutableList<Entry>>()
+    val offsetEntries get(): LiveData<MutableList<Entry>> = _offsetEntries
+
+    private val _accelerationEntries = MutableLiveData<MutableList<Entry>>()
+    val accelerationEntries: LiveData<MutableList<Entry>> get() = _accelerationEntries
+
+    private val _powerEntries = MutableLiveData<MutableList<Entry>>()
+    val powerEntries: LiveData<MutableList<Entry>> get() = _powerEntries
+
+    private val _forceEntries = MutableLiveData<MutableList<Entry>>()
+    val forceEntries: LiveData<MutableList<Entry>> get() = _forceEntries
 
     private val _navigateToDetailedReportEvent = MutableSharedFlow<ReportModel>()
     val navigateToDetailedReportEvent get() = _navigateToDetailedReportEvent.asSharedFlow()
@@ -76,24 +84,28 @@ class WorkoutViewModel(
             )
             else TimeUnit.MILLISECONDS.toSeconds(currentTime - integerVariableNotificationStartTime)
 
-        connectedDeviceCharacteristics[characteristicId]?.apply {
+        connectedDeviceCharacteristics.saveCharacteristicDataPerTime(
+            characteristicId = characteristicId,
+            data = data.toFloat(),
+            timeDiffInSeconds = timeDiffInSeconds
+        )
+    }
 
-            if (characteristicId == BLE_VELOCITY_CHARACTERISTIC_UUID) {
-
-                add(Entry(timeDiffInSeconds.toFloat(), data.toFloat()))
-
-                _velocityEntries.value =
-                    connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]
-
-            } else if (characteristicId == BLE_WEIGHT_CHARACTERISTIC_UUID) {
-
-                add(Entry(timeDiffInSeconds.toFloat(), data.toFloat()))
-
-                _dummyIntegerEntries.value =
-                    connectedDeviceCharacteristics[BLE_WEIGHT_CHARACTERISTIC_UUID]
+    private fun MutableMap<UUID, MutableList<Entry>>.saveCharacteristicDataPerTime(
+        characteristicId: UUID,
+        data: Float,
+        timeDiffInSeconds: Long,
+    ) = this[characteristicId]
+        ?.apply { add(Entry(timeDiffInSeconds.toFloat(), data)) }
+        ?.also {
+            when (characteristicId) {
+                BLE_VELOCITY_CHARACTERISTIC_UUID -> _velocityEntries.value = it
+                BLE_OFFSET_CHARACTERISTIC_UUID -> _offsetEntries.value = it
+                BLE_ACCELERATION_CHARACTERISTIC_UUID -> _accelerationEntries.value = it
+                BLE_POWER_CHARACTERISTIC_UUID -> _powerEntries.value = it
+                BLE_FORCE_CHARACTERISTIC_UUID -> _forceEntries.value = it
             }
         }
-    }
 
     private fun getVelocityColorWheelColor(velocity: Float) = when (velocity) {
         in 0.0..0.25 -> ContextCompat.getColor(application, R.color.red_primary)
@@ -113,11 +125,29 @@ class WorkoutViewModel(
                         value = it.y
                     )
                 } ?: listOf(),
-                meanVelocity = 0.66f, // getMeanVelocity
-                meanPower = 550f, // getMeanPower
-                meanForce = 550f, // getMeanForce
+                meanVelocity = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.calculateMean()
+                    ?: 0f,
+                meanPower = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.calculateMean()
+                    ?: 0f,
+                meanForce = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.calculateMean()
+                    ?: 0f,
                 userId = authService.getCurrentUserId().orEmpty()
             )
         )
+    }
+
+    private fun List<Entry>.calculateMean(): Float {
+
+        var valuesSum = 0f
+        var mean = 0f
+
+        forEach { entry ->
+            valuesSum += entry.y
+        }
+
+        if (isNotEmpty())
+            mean = valuesSum / size
+
+        return mean
     }
 }
