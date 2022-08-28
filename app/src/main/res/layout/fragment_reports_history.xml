@@ -26,6 +26,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ctReportsHistoryTitle" />
 
+    <ProgressBar
+        android:id="@+id/pbReportsHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorReportsHistory"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:indeterminate="true"
+        app:layout_constraintVertical_bias="0.25"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvUserReports"
         android:layout_width="0dp"

@@ -32,9 +32,12 @@ class ReportsHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupBind()
+        setupLiveData()
     }
 
     private fun setupBind() = with(binding) {
+
+        ctReportsHistoryTitle.setOnClickListener { requireActivity().onBackPressed() }
 
         rvUserReports.adapter = GroupAdapter<GroupieViewHolder>().apply {
 
@@ -61,16 +64,21 @@ class ReportsHistoryFragment : Fragment() {
                 )
             }
         }
-
-        flowObserver(viewModel.onGetReportsFailureEvent) {
-            Toast.makeText(requireContext(), "Xiiii falhou - ${it.message}", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-        flowObserver(viewModel.onDeleteReportFailureEvent) {
-            Toast.makeText(requireContext(), "Xiiii falhou - ${it.message}", Toast.LENGTH_SHORT)
-                .show()
-        }
     }
 
+    private fun setupLiveData() = with(viewModel) {
+        flowObserver(onGetReportsFailureEvent) {
+            Toast.makeText(requireContext(), "Xiiii falhou - ${it.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        flowObserver(onDeleteReportFailureEvent) {
+            Toast.makeText(requireContext(), "Xiiii falhou - ${it.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        showProgress.observe(viewLifecycleOwner) {
+            binding.pbReportsHistory.visibility = if (it) View.VISIBLE else View.GONE
+        }
+    }
 }

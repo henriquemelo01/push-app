@@ -16,6 +16,9 @@ class ReportsHistoryViewModel(
     private val _reports = MutableLiveData<List<ReportModel>>()
     val reports: LiveData<List<ReportModel>> get() = _reports
 
+    private val _showProgress = MutableLiveData(false)
+    val showProgress: LiveData<Boolean> get() = _showProgress
+
     private val _onGetReportsFailureEvent = MutableSharedFlow<Throwable>()
     val onGetReportsFailureEvent get() = _onGetReportsFailureEvent.asSharedFlow()
 
@@ -29,11 +32,15 @@ class ReportsHistoryViewModel(
 
         currentUserID?.let { userID ->
 
+            _showProgress.value = true
+
             repository.getUserReports(userID)
                 .onSuccess { reportsModel ->
+                    _showProgress.value = false
                     _reports.value = reportsModel
                 }
                 .onFailure { failure ->
+                    _showProgress.value = false
                     _onGetReportsFailureEvent.emit(failure)
                 }
         }
