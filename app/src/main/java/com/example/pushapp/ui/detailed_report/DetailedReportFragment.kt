@@ -13,6 +13,7 @@ import com.example.pushapp.R
 import com.example.pushapp.databinding.FragmentDetailedReportBinding
 import com.example.pushapp.utils.flowObserver
 import com.example.pushapp.utils.setupStyle
+import com.example.pushapp.utils.showOnce
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,6 +34,7 @@ class DetailedReportFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) = FragmentDetailedReportBinding.inflate(inflater, container, false).apply {
+        lifecycle.addObserver(viewModel)
         binding = this
     }.root
 
@@ -43,13 +45,23 @@ class DetailedReportFragment : Fragment() {
     }
 
     private fun setupBind() = with(binding) {
-        ctDetailedReportTitle.setLeftIconClickListener { requireActivity().onBackPressed() }
+
+        ivArrowLeft.setOnClickListener { requireActivity().onBackPressed() }
+
+        ivReportGraphFilter.setOnClickListener {
+            viewModel.triggerOpenFilterBottomSheetEvent()
+        }
     }
 
     private fun setupLiveData() = with(viewModel) {
 
         trainingMethod.observe(viewLifecycleOwner) {
-            binding.ctDetailedReportTitle.title = getString(R.string.detailed_report_title, it)
+            binding.tvHeader.text = getString(R.string.detailed_report_title, it)
+        }
+
+        workoutWeight.observe(viewLifecycleOwner) {
+            binding.tvWorkoutWeight.text =
+                getString(R.string.workout_weight_detailed_report_label, it)
         }
 
         showSaveReportButton.observe(viewLifecycleOwner) { showSaveButton ->
@@ -60,22 +72,41 @@ class DetailedReportFragment : Fragment() {
             binding.btDiscardReport.visibility = if (showDiscardButton) View.VISIBLE else View.GONE
         }
 
-        offsetEntries.observe(viewLifecycleOwner) { entries ->
+        selectedFilterEntries.observe(viewLifecycleOwner) {
 
-            binding.lcOffsetMovements.apply {
+            binding.lcVelocityData.apply {
+
                 setupStyle(
-                    minValue = offsetMovementsMinValue,
-                    maxValue = offsetMovementsMaxValue
+                    minValue = getSelectedFilterEntriesMinValue(),
+                    maxValue = getSelectedFilterEntriesMaxValue()
                 )
 
-                visibility = if (entries.isNotEmpty()) View.VISIBLE else View.GONE
+                if (it.entries.isEmpty())
+                    clear()
 
-                val dataSet =
-                    LineDataSet(entries, LINE_CHART_OFFSET_LABEL).setupStyle(context)
+                it.entries.forEachIndexed { index, entry ->
 
-                data = LineData(dataSet)
+                    val chartId = entry.key.chartLabel
 
-                invalidate()
+                    val lineColor = entry.key.graphLineColor
+
+                    val dataSet = LineDataSet(entry.value, chartId).setupStyle(
+                        context = context,
+                        lineColor = lineColor,
+                        containsGradient = false
+                    )
+
+                    if (index == 0)
+                        data = LineData(dataSet)
+                    else
+                        data.addDataSet(dataSet)
+
+                    data.notifyDataChanged()
+
+                    notifyDataSetChanged()
+
+                    invalidate()
+                }
             }
         }
 
@@ -88,11 +119,23 @@ class DetailedReportFragment : Fragment() {
         }
 
         meanPower.observe(viewLifecycleOwner) {
-            binding.tvMeanPowerData.text = it.toString()
+            binding.tvMeanPowerData.text = getString(R.string.mean_power_data_label, it)
         }
 
         meanForce.observe(viewLifecycleOwner) {
             binding.tvMeanForceData.text = getString(R.string.mean_force_data_label, it)
+        }
+
+        flowObserver(openFilterBottomSheetEvent) {
+            ReportFilterBottomSheet.newInstance(
+                reportFilterArgs = ReportFilterBottomSheet.ReportFilterArgs(
+                    selectedFilters = viewModel.selectedFilters
+                )
+            ).apply {
+                setOnApplyFilters {
+                    viewModel.onApplyFilter(it.toMutableSet())
+                }
+            }.showOnce(childFragmentManager)
         }
     }
 
