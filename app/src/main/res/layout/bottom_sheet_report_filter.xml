@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/vReportFilters"
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="24dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvBsReportFilters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/filter"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vReportFilters" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbOffsetFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvBsReportFilters" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvOffsetFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/offset"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/cbOffsetFilter"
+        app:layout_constraintStart_toEndOf="@id/cbOffsetFilter"
+        app:layout_constraintTop_toTopOf="@id/cbOffsetFilter" />
+
+    <View
+        android:id="@+id/separatorOffsetFilter"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbOffsetFilter" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbAccelerationFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorOffsetFilter" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvAccelerationFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/acceleration"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/cbAccelerationFilter"
+        app:layout_constraintStart_toEndOf="@id/cbAccelerationFilter"
+        app:layout_constraintTop_toTopOf="@id/cbAccelerationFilter" />
+
+    <View
+        android:id="@+id/separatorAccelerationFilter"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbAccelerationFilter" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbVelocityFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorAccelerationFilter" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvVelocityFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/velocity"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/cbVelocityFilter"
+        app:layout_constraintStart_toEndOf="@id/cbVelocityFilter"
+        app:layout_constraintTop_toTopOf="@id/cbVelocityFilter" />
+
+    <View
+        android:id="@+id/separatorVelocityFilter"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbVelocityFilter" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbForceFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorVelocityFilter" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvForceFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/force"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/cbForceFilter"
+        app:layout_constraintStart_toEndOf="@id/cbForceFilter"
+        app:layout_constraintTop_toTopOf="@id/cbForceFilter" />
+
+    <View
+        android:id="@+id/separatorForceFilter"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbForceFilter" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbPowerFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorForceFilter" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvPowerFilter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="@string/power"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/cbPowerFilter"
+        app:layout_constraintStart_toEndOf="@id/cbPowerFilter"
+        app:layout_constraintTop_toTopOf="@id/cbPowerFilter" />
+
+    <View
+        android:id="@+id/separatorPowerFilter"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cbPowerFilter" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btApplyFilters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/blue"
+        android:paddingVertical="16dp"
+        android:text="@string/button_apply_filter"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/separatorPowerFilter" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,7 @@ import com.example.pushapp.models.WorkoutConfigurationModel
 import com.example.pushapp.models.training_configuration.Exercise
 import com.example.pushapp.models.training_configuration.TrainingMethodology
 import com.example.pushapp.services.PushAppAuthService
+import com.example.pushapp.utils.toOffsetList
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -278,12 +279,5 @@ class WorkoutViewModel(
             mean = valuesSum / size
 
         return mean
-    }
-
-    private fun List<Entry>.toOffsetList(): List<Offset> = map {
-        Offset(
-            timestamp = it.x,
-            value = it.y
-        )
     }
 }

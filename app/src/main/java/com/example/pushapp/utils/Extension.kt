@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.example.pushapp.R
+import com.example.pushapp.models.Offset
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.Flow
@@ -102,7 +104,8 @@ fun LineChart.setupStyle(
 
 fun LineDataSet.setupStyle(
     context: Context, @ColorRes
-    lineColor: Int = R.color.blue_primary
+    lineColor: Int = R.color.blue_primary,
+    containsGradient: Boolean = true
 ) =
     this.apply {
 
@@ -120,7 +123,7 @@ fun LineDataSet.setupStyle(
 
         color = ContextCompat.getColor(context, lineColor)
 
-        setDrawFilled(true)
+        setDrawFilled(containsGradient)
         fillDrawable = ContextCompat.getDrawable(context, R.drawable.shape_blue_primary)
     }
 
@@ -131,4 +134,11 @@ fun TextInputLayout.checkErrorState(wasError: Boolean) = apply {
         error = null
         helperText = null
     }
+}
+
+fun List<Entry>.toOffsetList(): List<Offset> = map {
+    Offset(
+        timestamp = it.x,
+        value = it.y
+    )
 }
