@@ -146,7 +146,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
         velocityEntries.observe(viewLifecycleOwner) { entries ->
 
             binding.lcVelocityData.apply {
-                setupStyle()
+                setupStyle(minValue = velocityMinValue, maxValue = velocityMaxValue)
 
                 visibility = if (entries.isNotEmpty()) View.VISIBLE else View.GONE
 

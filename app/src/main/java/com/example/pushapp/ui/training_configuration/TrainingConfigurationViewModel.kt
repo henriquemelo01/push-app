@@ -1,15 +1,20 @@
 package com.example.pushapp.ui.training_configuration
 
 import androidx.lifecycle.*
+import com.example.pushapp.models.UserModel
 import com.example.pushapp.models.WorkoutConfigurationModel
 import com.example.pushapp.models.training_configuration.Exercise
 import com.example.pushapp.models.training_configuration.TrainingMethodology
+import com.example.pushapp.services.PushAppAuthService
+import com.example.pushapp.services.PushAppRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class TrainingConfigurationViewModel : ViewModel() {
+class TrainingConfigurationViewModel(
+    private val authService: PushAppAuthService,
+    private val repository: PushAppRepository
+) : ViewModel(), DefaultLifecycleObserver {
 
     private var selectedExercise = Exercise.SMITH_MACHINE.value
 
@@ -36,6 +41,33 @@ class TrainingConfigurationViewModel : ViewModel() {
     val enableStartButton: LiveData<Boolean> get() = _enableStartButton
 
     var bluetoothEnabled = false
+
+    override fun onCreate(owner: LifecycleOwner) {
+        getUserData()
+    }
+
+    private val _user = MutableLiveData<UserModel>()
+
+    val userFirstName = _user.map { it.firstName.split(" ").first() }
+    val showUserFirstName = _user.map { it.firstName.isNotEmpty() }
+
+    private val _onGetUserDataFailureEvent = MutableSharedFlow<Throwable>()
+    val onGetUserDataFailureEvent get() = _onGetUserDataFailureEvent.asSharedFlow()
+
+    private fun getUserData() = viewModelScope.launch {
+
+        val userId = authService.getCurrentUserId()
+
+        userId?.let {
+            repository.getUser(it)
+                .onSuccess { userModel ->
+                    _user.value = userModel
+                }
+                .onFailure { failure ->
+                    _onGetUserDataFailureEvent.emit(failure)
+                }
+        }
+    }
 
     fun onExerciseSpinnerItemSelected(exercisePosition: Int) {
         // Solução temporaria - Usar Mediator

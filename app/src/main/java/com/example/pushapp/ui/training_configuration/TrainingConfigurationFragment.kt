@@ -22,17 +22,19 @@ import com.example.pushapp.R
 import com.example.pushapp.utils.BlePermissionsHandler
 import com.example.pushapp.databinding.FragmentTrainingConfigurationBinding
 import com.example.pushapp.utils.flowObserver
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TrainingConfigurationFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingConfigurationBinding
 
-    private val viewModel: TrainingConfigurationViewModel by viewModels()
+    private val viewModel: TrainingConfigurationViewModel by viewModel()
 
     private lateinit var blePermissionsHandler: BlePermissionsHandler
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
-        val bluetoothManager = requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val bluetoothManager =
+            requireActivity().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
     }
 
@@ -48,6 +50,7 @@ class TrainingConfigurationFragment : Fragment() {
         )
 
         lifecycle.addObserver(blePermissionsHandler)
+        lifecycle.addObserver(viewModel)
         binding = this
 
     }.root
@@ -71,7 +74,7 @@ class TrainingConfigurationFragment : Fragment() {
             setOnItemClickListener { _, _, position, _ ->
                 viewModel.onExerciseSpinnerItemSelected(position)
             }
-            
+
 //            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //
 //                override fun onItemSelected(
@@ -122,12 +125,27 @@ class TrainingConfigurationFragment : Fragment() {
         btStartTraining.setOnClickListener {
             blePermissionsHandler.checkPermissions()
 
-            if(viewModel.bluetoothEnabled)
+            if (viewModel.bluetoothEnabled)
                 viewModel.triggerNavigateToWorkoutScreenEvent()
         }
     }
 
     private fun setupLiveData() = with(viewModel) {
+
+        showUserFirstName.observe(viewLifecycleOwner) {
+            binding.tvHelloTrainingConfig.visibility = if (it) View.VISIBLE else View.GONE
+            binding.tvUserFirstName.visibility = if (it) View.VISIBLE else View.GONE
+        }
+
+        userFirstName.observe(viewLifecycleOwner) {
+            binding.tvUserFirstName.text = it
+        }
+
+        flowObserver(onGetUserDataFailureEvent) { failure ->
+            Toast
+                .makeText(requireContext(), "Xiii falhou: ${failure.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
 
         enableStartButton.observe(viewLifecycleOwner) { btStartIsEnable ->
             binding.btStartTraining.isEnabled = btStartIsEnable
@@ -169,7 +187,7 @@ class TrainingConfigurationFragment : Fragment() {
     private fun setupBlePermissionsHandlerCallbacks() = blePermissionsHandler.apply {
 
         setOnPermissionsAccepted {
-            if(!bluetoothAdapter.isEnabled)
+            if (!bluetoothAdapter.isEnabled)
                 turnOnBluetooth()
             else
                 viewModel.bluetoothEnabled = true

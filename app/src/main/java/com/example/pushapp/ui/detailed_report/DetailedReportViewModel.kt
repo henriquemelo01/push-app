@@ -3,6 +3,7 @@ package com.example.pushapp.ui.detailed_report
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.example.pushapp.models.Offset
 import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.detailed_report.AccesedBy
 import com.example.pushapp.services.PushAppRepository
@@ -20,12 +21,61 @@ class DetailedReportViewModel(
     private val repository: PushAppRepository
 ) : ViewModel() {
 
+    // OFFSET
+
     val offsetEntries = liveData {
-        val entries = reportModel.offsetMovements.map {
-            Entry(it.timestamp.toFloat(), it.value)
-        }
+        val entries = reportModel.offsetMovements.toEntries()
         emit(entries)
     }
+
+    val offsetMovementsMaxValue = reportModel.offsetMovements.maxValue()
+
+    val offsetMovementsMinValue = reportModel.offsetMovements.minValue()
+
+    // VELOCITY
+
+    val velocityEntries = liveData {
+        val entries = reportModel.velocityPerTime.toEntries()
+        emit(entries)
+    }
+
+    val velocitiesMaxValue = reportModel.velocityPerTime.maxValue()
+
+    val velocitiesMinValue = reportModel.velocityPerTime.minValue()
+
+
+    // FORCE
+
+    val forceEntries = liveData {
+        val entries = reportModel.forcePerTime.toEntries()
+        emit(entries)
+    }
+
+    val forcesMaxValue = reportModel.forcePerTime.maxValue()
+
+    val forcesMinValue = reportModel.forcePerTime.minValue()
+
+    // POWER
+
+    val powerEntries = liveData {
+        val entries = reportModel.powerPerTime.toEntries()
+        emit(entries)
+    }
+
+    val powerEntriesMaxValue = reportModel.powerPerTime.maxValue()
+
+    val powerEntriesMinValue = reportModel.powerPerTime.minValue()
+
+    // ACCELERATION
+
+    val accelerationEntries = liveData {
+        val entries = reportModel.accelerationPerTime.toEntries()
+        emit(entries)
+    }
+
+    val accelerationEntriesMaxValue = reportModel.accelerationPerTime.maxValue()
+
+    val accelerationEntriesValue = reportModel.powerPerTime.minValue()
 
     val exercise = liveData {
         emit(reportModel.exercise.value)
@@ -69,4 +119,12 @@ class DetailedReportViewModel(
                 _onSaveReportFailureEvent.emit(failure)
             }
     }
+
+    private fun List<Offset>.toEntries(): List<Entry> = map {
+        Entry(it.timestamp, it.value)
+    }
+
+    private fun  List<Offset>.maxValue() : Float = map { it.value }.maxOrNull() ?: 0f
+
+    private fun  List<Offset>.minValue() : Float = map { it.value }.minOrNull() ?: 0f
 }

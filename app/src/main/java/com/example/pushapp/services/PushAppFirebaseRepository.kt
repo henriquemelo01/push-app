@@ -58,8 +58,12 @@ class PushAppFirebaseRepository : PushAppRepository {
         val reportDocument = reportCollection.document(randomUUID)
 
         val reportData = mutableMapOf<String, Any>().apply {
-            put("id", randomUUID)
+            put("id", randomUUID) // nao tem necessidade de haver este campo **
             put("offsetMovements", report.offsetMovements)
+            put("velocityPerTime", report.velocityPerTime)
+            put("powerPerTime", report.powerPerTime)
+            put("forcePerTime", report.forcePerTime)
+            put("accelerationPerTime", report.accelerationPerTime)
             put("userId", report.userId)
             put("exercise", report.exercise)
             put("trainingMethodology", report.trainingMethodology)
