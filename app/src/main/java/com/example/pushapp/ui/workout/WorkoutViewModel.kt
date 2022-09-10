@@ -44,6 +44,10 @@ class WorkoutViewModel(
 
     private var velocityNotificationStartTime = 0L
 
+    var velocityMinValue = 0f
+
+    var velocityMaxValue = 0f
+
     private var offsetNotificationStartTime = 0L
 
     private var forceNotificationStartTime = 0L
@@ -82,24 +86,74 @@ class WorkoutViewModel(
             )
         }
 
+        setCharMinValue(
+            characteristicId = characteristicId,
+            data = data,
+            wasFirstNotification = wasFirstNotification
+        )
+
+        setCharMaxValue(
+            characteristicId = characteristicId,
+            data = data,
+            wasFirstNotification = wasFirstNotification
+        )
+
         val currentTime = Calendar.getInstance().time.time
 
-        val timeDiffInSeconds =
-            getTimeDiffInSeconds(characteristicId = characteristicId, currentTime = currentTime)
+        val timeDiffInMilliSeconds =
+            getTimeDiffInMilliseconds(
+                characteristicId = characteristicId,
+                currentTime = currentTime
+            )
 
         connectedDeviceCharacteristics.saveCharacteristicDataPerTime(
             characteristicId = characteristicId,
             data = data.toFloat(),
-            timeDiffInSeconds = timeDiffInSeconds
+            timeDiffInMilliSeconds = timeDiffInMilliSeconds
         )
     }
 
-    private fun setCharNotificationStartTime(characteristicId: UUID, startTime: Long) = when (characteristicId) {
-        BLE_VELOCITY_CHARACTERISTIC_UUID -> velocityNotificationStartTime = startTime
-        BLE_OFFSET_CHARACTERISTIC_UUID -> offsetNotificationStartTime = startTime
-        BLE_FORCE_CHARACTERISTIC_UUID -> forceNotificationStartTime = startTime
-        BLE_POWER_CHARACTERISTIC_UUID -> powerNotificationStartTime = startTime
-        else -> accelerationNotificationStartTime = startTime
+    private fun setCharNotificationStartTime(characteristicId: UUID, startTime: Long) =
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> velocityNotificationStartTime = startTime
+            BLE_OFFSET_CHARACTERISTIC_UUID -> offsetNotificationStartTime = startTime
+            BLE_FORCE_CHARACTERISTIC_UUID -> forceNotificationStartTime = startTime
+            BLE_POWER_CHARACTERISTIC_UUID -> powerNotificationStartTime = startTime
+            else -> accelerationNotificationStartTime = startTime
+        }
+
+    private fun setCharMinValue(
+        characteristicId: UUID,
+        data: Number,
+        wasFirstNotification: Boolean
+    ) {
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> {
+                if (wasFirstNotification)
+                    velocityMinValue = data.toFloat()
+                else
+                    data.toFloat().takeIf { it < velocityMinValue }?.let { velocityData ->
+                        velocityMinValue = velocityData
+                    }
+            }
+        }
+    }
+
+    private fun setCharMaxValue(
+        characteristicId: UUID,
+        data: Number,
+        wasFirstNotification: Boolean
+    ) {
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> {
+                if (wasFirstNotification)
+                    velocityMaxValue = data.toFloat()
+                else
+                    data.toFloat().takeIf { it > velocityMaxValue }?.let { velocityData ->
+                        velocityMaxValue = velocityData
+                    }
+            }
+        }
     }
 
     private fun getTimeDiffInSeconds(characteristicId: UUID, currentTime: Long): Long =
@@ -121,13 +175,31 @@ class WorkoutViewModel(
             )
         }
 
+    private fun getTimeDiffInMilliseconds(characteristicId: UUID, currentTime: Long): Long =
+        when (characteristicId) {
+            BLE_VELOCITY_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toMillis(
+                currentTime - velocityNotificationStartTime
+            )
+            BLE_OFFSET_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toMillis(
+                currentTime - offsetNotificationStartTime
+            )
+            BLE_FORCE_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toMillis(
+                currentTime - forceNotificationStartTime
+            )
+            BLE_POWER_CHARACTERISTIC_UUID -> TimeUnit.MILLISECONDS.toMillis(
+                currentTime - powerNotificationStartTime
+            )
+            else -> TimeUnit.MILLISECONDS.toMillis(
+                currentTime - accelerationNotificationStartTime
+            )
+        }
 
     private fun MutableMap<UUID, MutableList<Entry>>.saveCharacteristicDataPerTime(
         characteristicId: UUID,
         data: Float,
-        timeDiffInSeconds: Long,
+        timeDiffInMilliSeconds: Long,
     ) = this[characteristicId]
-        ?.apply { add(Entry(timeDiffInSeconds.toFloat(), data)) }
+        ?.apply { add(Entry(timeDiffInMilliSeconds.toFloat() / 1000, data)) }
         ?.also {
             when (characteristicId) {
                 BLE_VELOCITY_CHARACTERISTIC_UUID -> _velocityEntries.value = it
@@ -144,24 +216,50 @@ class WorkoutViewModel(
         else -> ContextCompat.getColor(application, R.color.green_secondary)
     }
 
+    private val offsetMovements
+        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.toOffsetList()
+            ?: listOf()
+
+    private val velocityPerTime
+        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.toOffsetList()
+            ?: listOf()
+
+    private val meanVelocity
+        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.calculateMean()
+            ?: 0f
+
+    private val powerPerTime
+        get() = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.toOffsetList()
+            ?: listOf()
+
+    private val meanPower
+        get() = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.calculateMean() ?: 0f
+
+    private val forcePerTime
+        get() = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.toOffsetList()
+            ?: listOf()
+
+    private val meanForce
+        get() = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.calculateMean() ?: 0f
+
+    private val accelerationPerTime
+        get() = connectedDeviceCharacteristics[BLE_ACCELERATION_CHARACTERISTIC_UUID]?.toOffsetList()
+            ?: listOf()
+
     fun navigateToDetailedReportFragment() = viewModelScope.launch {
         _navigateToDetailedReportEvent.emit(
             ReportModel(
                 exercise = workoutConfigModel.exercise,
                 trainingMethodology = workoutConfigModel.trainingMethodology,
                 weight = weightData.value ?: 0,
-                offsetMovements = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.map {
-                    Offset(
-                        timestamp = it.x.toLong(),
-                        value = it.y
-                    )
-                } ?: listOf(),
-                meanVelocity = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.calculateMean()
-                    ?: 0f,
-                meanPower = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.calculateMean()
-                    ?: 0f,
-                meanForce = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.calculateMean()
-                    ?: 0f,
+                offsetMovements = offsetMovements,
+                velocityPerTime = velocityPerTime,
+                powerPerTime = powerPerTime,
+                forcePerTime = forcePerTime,
+                accelerationPerTime = accelerationPerTime,
+                meanVelocity = meanVelocity,
+                meanPower = meanPower,
+                meanForce = meanForce,
                 userId = authService.getCurrentUserId().orEmpty()
             )
         )
@@ -180,5 +278,12 @@ class WorkoutViewModel(
             mean = valuesSum / size
 
         return mean
+    }
+
+    private fun List<Entry>.toOffsetList(): List<Offset> = map {
+        Offset(
+            timestamp = it.x,
+            value = it.y
+        )
     }
 }

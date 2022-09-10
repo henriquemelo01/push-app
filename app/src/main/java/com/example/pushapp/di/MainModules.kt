@@ -10,6 +10,7 @@ import com.example.pushapp.services.PushAppFirebaseRepository
 import com.example.pushapp.ui.detailed_report.DetailedReportViewModel
 import com.example.pushapp.ui.register.RegisterUserViewModel
 import com.example.pushapp.ui.reports_history.ReportsHistoryViewModel
+import com.example.pushapp.ui.training_configuration.TrainingConfigurationViewModel
 import com.example.pushapp.ui.workout.WorkoutViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -19,6 +20,13 @@ val mainModules = module {
     single<PushAppRepository> { PushAppFirebaseRepository() }
 
     single<PushAppAuthService> { PushAppFirebaseAuthService() }
+
+    viewModel {
+        TrainingConfigurationViewModel(
+            authService = get(),
+            repository = get()
+        )
+    }
 
     viewModel { (workoutConfigModel: WorkoutConfigurationModel) ->
         WorkoutViewModel(

@@ -1,23 +1,19 @@
 package com.example.pushapp.utils
 
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import android.content.pm.PackageManager
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.example.pushapp.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 //fun <T> Fragment.flowObserver(flow: Flow<T>, observer: (value: T) -> Unit) {
@@ -59,13 +55,22 @@ fun BluetoothGattCharacteristic.containsProperty(property: Int): Boolean =
 fun ByteArray.toHexString(): String =
     joinToString(separator = "", prefix = "0x") { String.format("%02X", it) }
 
-fun ByteArray.processIntegerData(): Int = toHexString().takeLast(6).filterIndexed { index, _ ->
-    index % 2 != 0
-}.toInt()
+fun ByteArray.processIntegerData(): Int = processData().toInt()
 
-fun ByteArray.processFloatData(): Float {
-    val hexStringData = this.toHexString().takeLast(8)
-    return "${hexStringData[1]}.${hexStringData[5]}${hexStringData[7]}".toFloat()
+fun ByteArray.processFloatData() = processData().toFloat()
+
+fun ByteArray.processData(): String {
+    val hexStringData = toHexString().split("0x")[1]
+    return hexStringData.decodeHex().trim { it == ' ' }
+}
+
+fun String.decodeHex(): String {
+    require(length % 2 == 0) {"Must have an even length"}
+    return String(
+        chunked(2)
+            .map { it.toInt(16).toByte() }
+            .toByteArray()
+    )
 }
 
 fun LineChart.setupStyle(
@@ -83,6 +88,7 @@ fun LineChart.setupStyle(
 
     xAxis.apply {
         position = XAxis.XAxisPosition.BOTTOM
+        setDrawGridLines(true)
     }
 
     setTouchEnabled(true)
@@ -94,9 +100,13 @@ fun LineChart.setupStyle(
     enableScroll()
 }
 
-fun LineDataSet.setupStyle(context: Context, @ColorRes lineColor: Int = R.color.dark_wine) =
+fun LineDataSet.setupStyle(
+    context: Context, @ColorRes
+    lineColor: Int = R.color.blue_primary
+) =
     this.apply {
-        mode = LineDataSet.Mode.CUBIC_BEZIER
+
+//        mode = LineDataSet.Mode.CUBIC_BEZIER
 
         setDrawValues(false)
 
@@ -109,6 +119,9 @@ fun LineDataSet.setupStyle(context: Context, @ColorRes lineColor: Int = R.color.
         setDrawCircles(false)
 
         color = ContextCompat.getColor(context, lineColor)
+
+        setDrawFilled(true)
+        fillDrawable = ContextCompat.getDrawable(context, R.drawable.shape_blue_primary)
     }
 
 fun TextInputLayout.checkErrorState(wasError: Boolean) = apply {

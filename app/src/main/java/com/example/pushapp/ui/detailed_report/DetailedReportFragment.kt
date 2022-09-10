@@ -43,7 +43,7 @@ class DetailedReportFragment : Fragment() {
     }
 
     private fun setupBind() = with(binding) {
-
+        ctDetailedReportTitle.setLeftIconClickListener { requireActivity().onBackPressed() }
     }
 
     private fun setupLiveData() = with(viewModel) {
@@ -63,7 +63,10 @@ class DetailedReportFragment : Fragment() {
         offsetEntries.observe(viewLifecycleOwner) { entries ->
 
             binding.lcOffsetMovements.apply {
-                setupStyle()
+                setupStyle(
+                    minValue = offsetMovementsMinValue,
+                    maxValue = offsetMovementsMaxValue
+                )
 
                 visibility = if (entries.isNotEmpty()) View.VISIBLE else View.GONE
 
@@ -81,7 +84,7 @@ class DetailedReportFragment : Fragment() {
         }
 
         meanVelocity.observe(viewLifecycleOwner) {
-            binding.tvMeanVelocityData.text = it.toString()
+            binding.tvMeanVelocityData.text = getString(R.string.velocity_data_label, it)
         }
 
         meanPower.observe(viewLifecycleOwner) {
@@ -89,13 +92,17 @@ class DetailedReportFragment : Fragment() {
         }
 
         meanForce.observe(viewLifecycleOwner) {
-            binding.tvMeanForceData.text = it.toString()
+            binding.tvMeanForceData.text = getString(R.string.mean_force_data_label, it)
         }
     }
 
     private fun setupListeners() = with(viewModel) {
 
         flowObserver(onSaveReportSuccessEvent) {
+            Toast
+                .makeText(requireContext(), "Relatório foi salvo com sucesso", Toast.LENGTH_SHORT)
+                .show()
+
             findNavController().navigate(NavigationDirections.actionGlobalToTrainingConfigurationFragment())
         }
 

@@ -12,6 +12,10 @@ data class ReportModel(
     val trainingMethodology: TrainingMethodology = TrainingMethodology.getByValue(""),
     val weight: Int = 0,
     val offsetMovements: List<Offset> = listOf(),
+    val velocityPerTime: List<Offset> = listOf(),
+    val powerPerTime: List<Offset> = listOf(),
+    val forcePerTime: List<Offset> = listOf(),
+    val accelerationPerTime: List<Offset> = listOf(),
     val meanVelocity: Float = 0f,
     val meanPower: Float = 0f,
     val meanForce: Float = 0f,
@@ -22,5 +26,5 @@ data class ReportModel(
 @Parcelize
 data class Offset(
     val value: Float = 0f,
-    val timestamp: Long = 0L
+    val timestamp: Float = 0f
 ) : Parcelable
