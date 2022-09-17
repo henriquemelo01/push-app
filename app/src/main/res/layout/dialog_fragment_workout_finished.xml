@@ -6,47 +6,42 @@
     android:background="@drawable/shape_rounded_8"
     android:padding="24dp">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_title_workout_finished_dialog"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Sessão Encerrada"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
+    <View
+        android:id="@+id/vWorkoutFinishedBottomSheet"
+        android:layout_width="50dp"
+        android:layout_height="4dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvWorkoutFinishedBottomSheet"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/button_finish_training_session"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/vWorkoutFinishedBottomSheet" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btShowReport"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="42dp"
-        android:background="@drawable/shape_rounded_green"
+        android:background="@drawable/shape_rounded_blue"
         android:padding="16dp"
-        android:text="Exibir relatório"
+        android:text="@string/button_show_report"
         android:textStyle="bold"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_workout_finished_dialog" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btSeeLater"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/shape_rounded_yellow"
-        android:padding="16dp"
-        android:text="Ver depois"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btShowReport" />
+        app:layout_constraintTop_toBottomOf="@id/tvWorkoutFinishedBottomSheet" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btDiscardMeasures"
@@ -55,12 +50,14 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/shape_rounded_red"
         android:padding="16dp"
-        android:text="Descartar"
+        android:text="@string/button_discard"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btSeeLater" />
+        app:layout_constraintTop_toBottomOf="@id/btShowReport" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

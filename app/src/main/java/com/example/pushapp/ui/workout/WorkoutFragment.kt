@@ -68,20 +68,6 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
             val bsFinishedWorkout = FinishedWorkoutBottomSheet().apply {
 
-                setOnSeeLaterClickListener {
-                    /*
-                        Persistir dados no Firebase e em sua calback de sucesso da peristência dos dados,
-                        fechar a BottomSheet e navegar até a tela de Configuração do Treino
-                     */
-                    dismiss()
-
-                    Toast
-                        .makeText(requireContext(), "Ver depois clicado", Toast.LENGTH_SHORT)
-                        .show()
-
-                    requireActivity().onBackPressed()
-                }
-
                 setOnShowReportClickListener {
                     dismiss()
                     Toast
@@ -111,10 +97,10 @@ class WorkoutFragment : BluetoothHandlerFragment() {
             binding.tvWorkoutWeight.text = getString(R.string.workout_weight_label, it)
         }
 
-        showVelocityWheel.observe(viewLifecycleOwner) { shouldShowVelocityWheel ->
-            binding.clVelocityWheel.visibility =
-                if (shouldShowVelocityWheel) View.VISIBLE else View.GONE
-        }
+//        showVelocityWheel.observe(viewLifecycleOwner) { shouldShowVelocityWheel ->
+//            binding.clVelocityWheel.visibility =
+//                if (shouldShowVelocityWheel) View.VISIBLE else View.GONE
+//        }
 
         velocityWheelColor.observe(viewLifecycleOwner) { color ->
             ContextCompat.getDrawable(
@@ -133,7 +119,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
             binding.tvVelocityWheelData.text = getString(R.string.velocity_wheel_label, it)
 
-            binding.tvVelocityData.text = getString(R.string.velocity_data_label, it)
+//            binding.tvVelocityData.text = getString(R.string.velocity_data_label, it)
 
             saveData(characteristicId = BLE_VELOCITY_CHARACTERISTIC_UUID, data = it)
         }
@@ -151,7 +137,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
                 visibility = if (entries.isNotEmpty()) View.VISIBLE else View.GONE
 
                 val dataSet =
-                    LineDataSet(entries, POSITION_CHART_SUBTITLES_LABEL).setupStyle(context)
+                    LineDataSet(entries, VELOCITY_CHART_SUBTITLES_LABEL).setupStyle(context)
 
                 data = LineData(dataSet)
 
@@ -160,13 +146,13 @@ class WorkoutFragment : BluetoothHandlerFragment() {
                 invalidate()
             }
 
-            binding.tvPositionGraphTitle.visibility =
+            binding.tvVelocityGraphTitle.visibility =
                 if (entries.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
         offsetData.observe(viewLifecycleOwner) {
             binding.progressBar.apply {
-                progress = it
+                progress = it // percentual em relacao ao tamanho da barra
                 max = 100
             }
 
@@ -174,6 +160,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
         }
 
         forceData.observe(viewLifecycleOwner) {
+            println("Force Data: $it")
             binding.tvForceData.text = getString(R.string.force_data_label, it)
             saveData(characteristicId = BLE_FORCE_CHARACTERISTIC_UUID, data = it)
         }
@@ -184,6 +171,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
         }
 
         powerData.observe(viewLifecycleOwner) {
+            binding.tvPowerData.text = getString(R.string.force_data_label, it)
             println("PowerData: $it")
             saveData(characteristicId = BLE_POWER_CHARACTERISTIC_UUID, data = it)
         }
@@ -218,6 +206,6 @@ class WorkoutFragment : BluetoothHandlerFragment() {
     }
 
     private companion object {
-        const val POSITION_CHART_SUBTITLES_LABEL = "POSIÇÃO"
+        const val VELOCITY_CHART_SUBTITLES_LABEL = "VELOCIDADE"
     }
 }
