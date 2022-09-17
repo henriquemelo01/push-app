@@ -36,9 +36,10 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:visibility="gone"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/separatorTrainingConfig"
-        android:text="Ola,"
+        android:text="@string/hello_label"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -184,7 +185,6 @@
             app:srcCompat="@drawable/ic_information" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btStartTraining"

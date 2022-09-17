@@ -13,8 +13,6 @@ class FinishedWorkoutBottomSheet : BottomSheetDialogFragment() {
 
     private var onShowReportClickListener: (() -> Unit)? = null
 
-    private var onSeeLaterClickListener: (() -> Unit)? = null
-
     private var onDiscardMeasuresClickListener: (() -> Unit)? = null
 
     override fun onCreateView(
@@ -31,18 +29,12 @@ class FinishedWorkoutBottomSheet : BottomSheetDialogFragment() {
 
             btShowReport.setOnClickListener { onShowReportClickListener?.invoke() }
 
-            btSeeLater.setOnClickListener { onSeeLaterClickListener?.invoke() }
-
             btDiscardMeasures.setOnClickListener { onDiscardMeasuresClickListener?.invoke() }
         }
     }
 
     fun setOnShowReportClickListener(callback: (() -> Unit)) {
         onShowReportClickListener = callback
-    }
-
-    fun setOnSeeLaterClickListener(callback: (() -> Unit)) {
-        onSeeLaterClickListener = callback
     }
 
     fun setOnDiscardMeasuresClickListener(callback: (() -> Unit)) {

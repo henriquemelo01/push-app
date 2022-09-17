@@ -16,7 +16,7 @@
     <string name="device_connected_status_text">%1$s - %2$s</string>
     <string name="velocity_data_label">%1$.2f meters per second [m/s]</string>
     <string name="force_data_label">%1$d kilogram-force [kgf]</string>
-    <string name="mean_force_data_label">%1$.2f meters per second [m/s]</string>
+    <string name="mean_force_data_label">%1$.2f kilogram-force [kgf]</string>
     <string name="mean_power_data_label">%1$.2f joules [J]</string>
     <string name="workout_weight_label">[ %1$dKG ]</string>
     <string name="workout_weight_detailed_report_label">%1$d kilogramas</string>
@@ -48,4 +48,10 @@
     <string name="button_apply_filter">Aplicar</string>
     <string name="button_save_report">Salvar Relatório</string>
     <string name="button_discard_report">Discartar Relatório</string>
+    <string name="velocityPerTime">Velocidade x Tempo</string>
+    <string name="finish_training">Encerrar treino</string>
+    <string name="hello_label">Ola,</string>
+    <string name="button_discard">Descartar</string>
+    <string name="button_show_report">Exibir relatório</string>
+    <string name="button_finish_training_session">Sessão Encerrada</string>
 </resources>
