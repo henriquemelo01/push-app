@@ -5,6 +5,7 @@ import com.example.pushapp.models.Offset
 import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.detailed_report.AccesedBy
 import com.example.pushapp.models.detailed_report.ReportVariables
+import com.example.pushapp.models.training_configuration.TrainingMethodology
 import com.example.pushapp.services.PushAppRepository
 import com.example.pushapp.utils.toOffsetList
 import com.github.mikephil.charting.data.Entry
@@ -33,6 +34,12 @@ class DetailedReportViewModel(
 
     private val accelerationEntries = reportModel.accelerationPerTime.toEntries()
 
+    private val meanVelocityData
+        get() =
+            if (reportModel.trainingMethodology == TrainingMethodology.VELOCITY_BASED_TRAINING)
+                velocityEntries.calculateVelocityMeanConcentrica()
+            else reportModel.meanVelocity
+
     val exercise = liveData {
         emit(reportModel.exercise.value)
     }
@@ -42,7 +49,7 @@ class DetailedReportViewModel(
     }
 
     val meanVelocity = liveData {
-        emit(reportModel.meanVelocity)
+        emit(meanVelocityData)
     }
 
     val meanPower = liveData {
@@ -157,5 +164,19 @@ class DetailedReportViewModel(
                 minValue = charMinValue
         }
         return minValue
+    }
+
+    private fun List<Entry>.calculateVelocityMeanConcentrica(): Float {
+
+        var totalVelocities = 0f
+        var meanVelocity = 0f
+
+        val filteredVelocities = filter { it.y <= 0f }.map { it.y }
+        totalVelocities = filteredVelocities.sum()
+
+        if (filteredVelocities.isNotEmpty())
+            meanVelocity = totalVelocities / filteredVelocities.size
+
+        return meanVelocity
     }
 }

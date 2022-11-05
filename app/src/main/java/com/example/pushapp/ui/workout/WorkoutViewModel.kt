@@ -252,7 +252,7 @@ class WorkoutViewModel(
             ReportModel(
                 exercise = workoutConfigModel.exercise,
                 trainingMethodology = workoutConfigModel.trainingMethodology,
-                weight = weightData.value ?: 0,
+                weight = weightData.value ?: 0f,
                 offsetMovements = offsetMovements,
                 velocityPerTime = velocityPerTime,
                 powerPerTime = powerPerTime,
