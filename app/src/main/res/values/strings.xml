@@ -18,8 +18,8 @@
     <string name="force_data_label">%1$d kilogram-force [kgf]</string>
     <string name="mean_force_data_label">%1$.2f kilogram-force [kgf]</string>
     <string name="mean_power_data_label">%1$.2f joules [J]</string>
-    <string name="workout_weight_label">[ %1$dKG ]</string>
-    <string name="workout_weight_detailed_report_label">%1$d kilogramas</string>
+    <string name="workout_weight_label">[ %1$.1fKG ]</string>
+    <string name="workout_weight_detailed_report_label">%1$.1f kilogramas</string>
     <string name="velocity_wheel_label">%1$.2f m/s</string>
 
     <string-array name="exercise_list">

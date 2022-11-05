@@ -69,8 +69,8 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     protected val _velocityData = MutableLiveData<Float>()
     val velocityData: LiveData<Float> get() = _velocityData
 
-    private val _weightData = MutableLiveData<Int>()
-    val weightData: LiveData<Int> = _weightData
+    private val _weightData = MutableLiveData<Float>()
+    val weightData: LiveData<Float> = _weightData
 
     private val _offsetData = MutableLiveData<Int>()
     val offsetData: LiveData<Int> = _offsetData
@@ -184,7 +184,7 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     fun notifyCharacteristicDataChange(characteristicId: UUID, data: ByteArray) {
         when (characteristicId) {
             BLE_VELOCITY_CHARACTERISTIC_UUID -> _velocityData.value = data.processFloatData()
-            BLE_WEIGHT_CHARACTERISTIC_UUID -> _weightData.value = data.processIntegerData()
+            BLE_WEIGHT_CHARACTERISTIC_UUID -> _weightData.value = data.processFloatData()
             BLE_OFFSET_CHARACTERISTIC_UUID -> _offsetData.value = data.processIntegerData()
             BLE_ACCELERATION_CHARACTERISTIC_UUID -> _accelerationData.value =
                 data.processFloatData()
@@ -194,7 +194,8 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     }
 
     companion object {
-        const val ESP_32_MAC_ADDRESS = "CC:50:E3:95:BA:A2"
+//        const val ESP_32_MAC_ADDRESS = "CC:50:E3:95:BA:A2" // Prototipo
+        const val ESP_32_MAC_ADDRESS = "EC:62:60:93:6B:D6"
 
         val BLE_SERVICE_UUID: UUID = UUID.fromString("f8ab3678-b2b6-11ec-b909-0242ac120002")
         val SECOND_WORKOUT_BLE_SERVICE: UUID =
