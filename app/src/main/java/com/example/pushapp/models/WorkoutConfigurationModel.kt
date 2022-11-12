@@ -8,7 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class WorkoutConfigurationModel(
     val exercise: Exercise,
-    val trainingMethodology: TrainingMethodology,
-    val weight: Int,
-    val numberOfSets: Int
+    val trainingMethodology: TrainingMethodology
 ) : Parcelable

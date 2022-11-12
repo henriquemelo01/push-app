@@ -75,14 +75,14 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     private val _offsetData = MutableLiveData<Int>()
     val offsetData: LiveData<Int> = _offsetData
 
-    private val _forceData = MutableLiveData<Int>()
-    val forceData: LiveData<Int> = _forceData
+    private val _forceData = MutableLiveData<Float>()
+    val forceData: LiveData<Float> = _forceData
 
     private val _accelerationData = MutableLiveData<Float>()
     val accelerationData: LiveData<Float> = _accelerationData
 
-    private val _powerData = MutableLiveData<Int>()
-    val powerData: LiveData<Int> = _powerData
+    private val _powerData = MutableLiveData<Float>()
+    val powerData: LiveData<Float> = _powerData
 
     fun onDiscoveredPeripheral(peripheral: BluetoothPeripheral) {
 
@@ -188,8 +188,8 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
             BLE_OFFSET_CHARACTERISTIC_UUID -> _offsetData.value = data.processIntegerData()
             BLE_ACCELERATION_CHARACTERISTIC_UUID -> _accelerationData.value =
                 data.processFloatData()
-            BLE_FORCE_CHARACTERISTIC_UUID -> _forceData.value = data.processIntegerData()
-            BLE_POWER_CHARACTERISTIC_UUID -> _powerData.value = data.processIntegerData()
+            BLE_FORCE_CHARACTERISTIC_UUID -> _forceData.value = data.processFloatData()
+            BLE_POWER_CHARACTERISTIC_UUID -> _powerData.value = data.processFloatData()
         }
     }
 

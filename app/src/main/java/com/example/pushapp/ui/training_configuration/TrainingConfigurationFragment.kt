@@ -147,9 +147,9 @@ class TrainingConfigurationFragment : Fragment() {
                 .show()
         }
 
-        enableStartButton.observe(viewLifecycleOwner) { btStartIsEnable ->
-            binding.btStartTraining.isEnabled = btStartIsEnable
-        }
+//        enableStartButton.observe(viewLifecycleOwner) { btStartIsEnable ->
+//            binding.btStartTraining.isEnabled = btStartIsEnable
+//        }
 
         flowObserver(navigateToWorkoutScreenEvent) { workoutConfigModel ->
             findNavController().navigate(

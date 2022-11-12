@@ -5,7 +5,6 @@ import com.example.pushapp.models.Offset
 import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.detailed_report.AccesedBy
 import com.example.pushapp.models.detailed_report.ReportVariables
-import com.example.pushapp.models.training_configuration.TrainingMethodology
 import com.example.pushapp.services.PushAppRepository
 import com.example.pushapp.utils.toOffsetList
 import com.github.mikephil.charting.data.Entry
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.math.abs
 
 class DetailedReportViewModel(
     private val reportModel: ReportModel,
@@ -34,12 +34,6 @@ class DetailedReportViewModel(
 
     private val accelerationEntries = reportModel.accelerationPerTime.toEntries()
 
-    private val meanVelocityData
-        get() =
-            if (reportModel.trainingMethodology == TrainingMethodology.VELOCITY_BASED_TRAINING)
-                velocityEntries.calculateVelocityMeanConcentrica()
-            else reportModel.meanVelocity
-
     val exercise = liveData {
         emit(reportModel.exercise.value)
     }
@@ -49,11 +43,15 @@ class DetailedReportViewModel(
     }
 
     val meanVelocity = liveData {
-        emit(meanVelocityData)
+        emit(
+            abs(reportModel.meanVelocity)
+        )
     }
 
     val meanPower = liveData {
-        emit(reportModel.meanPower)
+        emit(
+            abs(reportModel.meanPower)
+        )
     }
 
     val meanForce = liveData {
@@ -146,10 +144,19 @@ class DetailedReportViewModel(
 
     private fun List<Offset>.minValue(): Float = map { it.value }.minOrNull() ?: 0f
 
+
     fun getSelectedFilterEntriesMaxValue(): Float {
         var maxValue = 0f
         _selectedFilterEntries.value?.entries?.forEach {
-            val charMaxValue = it.value.toOffsetList().maxValue()
+
+            val signalInversionStatement =
+                it.key == ReportVariables.VELOCITY || it.key == ReportVariables.POWER
+
+            val offsetList = it.value.toOffsetList()
+
+            val charMaxValue = if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                .maxValue() else offsetList.maxValue()
+
             if (charMaxValue > maxValue)
                 maxValue = charMaxValue
         }
@@ -159,24 +166,38 @@ class DetailedReportViewModel(
     fun getSelectedFilterEntriesMinValue(): Float {
         var minValue = 0f
         _selectedFilterEntries.value?.entries?.forEach {
-            val charMinValue = it.value.toOffsetList().minValue()
+
+            val signalInversionStatement =
+                it.key == ReportVariables.VELOCITY || it.key == ReportVariables.POWER
+
+            val offsetList = it.value.toOffsetList()
+
+            val charMinValue = if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                .minValue() else offsetList.minValue()
+
             if (charMinValue < minValue)
                 minValue = charMinValue
         }
         return minValue
     }
 
-    private fun List<Entry>.calculateVelocityMeanConcentrica(): Float {
-
-        var totalVelocities = 0f
-        var meanVelocity = 0f
-
-        val filteredVelocities = filter { it.y <= 0f }.map { it.y }
-        totalVelocities = filteredVelocities.sum()
-
-        if (filteredVelocities.isNotEmpty())
-            meanVelocity = totalVelocities / filteredVelocities.size
-
-        return meanVelocity
-    }
+//    fun getSelectedFilterEntriesMaxValue(): Float {
+//        var maxValue = 0f
+//        _selectedFilterEntries.value?.entries?.forEach {
+//            val charMaxValue = it.value.toOffsetList().maxValue()
+//            if (charMaxValue > maxValue)
+//                maxValue = charMaxValue
+//        }
+//        return maxValue
+//    }
+//
+//    fun getSelectedFilterEntriesMinValue(): Float {
+//        var minValue = 0f
+//        _selectedFilterEntries.value?.entries?.forEach {
+//            val charMinValue = it.value.toOffsetList().minValue()
+//            if (charMinValue < minValue)
+//                minValue = charMinValue
+//        }
+//        return minValue
+//    }
 }
