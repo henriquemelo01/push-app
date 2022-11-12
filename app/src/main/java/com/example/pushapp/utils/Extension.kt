@@ -142,3 +142,12 @@ fun List<Entry>.toOffsetList(): List<Offset> = map {
         value = it.y
     )
 }
+
+/*
+Lista com os valores medios
+
+private fun List<Entry>.getMeanList() = mapIndexed { index, value ->
+   	this.subList(0, index + 1).calculateVelocityOrPowerMeanConcentrica()
+}
+
+ */
