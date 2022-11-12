@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.example.pushapp.R
-import com.example.pushapp.models.Offset
 import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.WorkoutConfigurationModel
 import com.example.pushapp.models.training_configuration.Exercise
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 class WorkoutViewModel(
     private val workoutConfigModel: WorkoutConfigurationModel,
@@ -26,11 +26,6 @@ class WorkoutViewModel(
 
     val title = liveData {
         emit(workoutConfigModel.trainingMethodology.value)
-    }
-
-    // Será removido -> Input de Massa
-    val weight = liveData {
-        emit(workoutConfigModel.weight)
     }
 
     val showBarPositionContainer = liveData {
@@ -211,14 +206,20 @@ class WorkoutViewModel(
             }
         }
 
-    private fun getVelocityColorWheelColor(velocity: Float) = when (velocity) {
-        in 0.0..0.25 -> ContextCompat.getColor(application, R.color.red_primary)
-        in 0.25..0.50 -> ContextCompat.getColor(application, R.color.yellow_primary)
-        else -> ContextCompat.getColor(application, R.color.green_secondary)
+    private fun getVelocityColorWheelColor(velocity: Float): Int {
+
+        val velocityColor = when (velocity) {
+            in 0.7..1.3 -> ContextCompat.getColor(application, R.color.green_primary)
+            in -0.7..-1.3 -> ContextCompat.getColor(application, R.color.green_primary)
+            else -> ContextCompat.getColor(application, R.color.red_primary)
+        }
+
+        return if (workoutConfigModel.trainingMethodology == TrainingMethodology.FREE_TRAINING)
+            ContextCompat.getColor(application, R.color.gray) else velocityColor
     }
 
     private val offsetMovements
-        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.toOffsetList()
+        get() = connectedDeviceCharacteristics[BLE_OFFSET_CHARACTERISTIC_UUID]?.toOffsetList()
             ?: listOf()
 
     private val velocityPerTime
@@ -226,22 +227,30 @@ class WorkoutViewModel(
             ?: listOf()
 
     private val meanVelocity
-        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.calculateMean()
-            ?: 0f
+        get() = connectedDeviceCharacteristics[BLE_VELOCITY_CHARACTERISTIC_UUID]?.calculateMeanBasedOnTrainingMethod(
+            trainingMethodology = workoutConfigModel.trainingMethodology,
+            uuidCharacteristic = BLE_VELOCITY_CHARACTERISTIC_UUID
+        ) ?: 0f
 
     private val powerPerTime
         get() = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.toOffsetList()
             ?: listOf()
 
     private val meanPower
-        get() = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.calculateMean() ?: 0f
+        get() = connectedDeviceCharacteristics[BLE_POWER_CHARACTERISTIC_UUID]?.calculateMeanBasedOnTrainingMethod(
+            trainingMethodology = workoutConfigModel.trainingMethodology,
+            uuidCharacteristic = BLE_POWER_CHARACTERISTIC_UUID
+        ) ?: 0f
 
     private val forcePerTime
         get() = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.toOffsetList()
             ?: listOf()
 
     private val meanForce
-        get() = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.calculateMean() ?: 0f
+        get() = connectedDeviceCharacteristics[BLE_FORCE_CHARACTERISTIC_UUID]?.calculateMeanBasedOnTrainingMethod(
+            trainingMethodology = workoutConfigModel.trainingMethodology,
+            uuidCharacteristic = BLE_FORCE_CHARACTERISTIC_UUID
+        ) ?: 0f
 
     private val accelerationPerTime
         get() = connectedDeviceCharacteristics[BLE_ACCELERATION_CHARACTERISTIC_UUID]?.toOffsetList()
@@ -266,18 +275,65 @@ class WorkoutViewModel(
         )
     }
 
-    private fun List<Entry>.calculateMean(): Float {
+    // Treino Livre
+    private fun List<Entry>.calculateMean(isMeanWithAbsValue: Boolean = false): Float {
 
         var valuesSum = 0f
         var mean = 0f
 
-        forEach { entry ->
-            valuesSum += entry.y
+        map { if (isMeanWithAbsValue) abs(it.y) else it.y }.forEach { values ->
+            valuesSum += values
         }
 
         if (isNotEmpty())
             mean = valuesSum / size
 
         return mean
+    }
+
+    private fun List<Entry>.calculateMeanBasedOnTrainingMethod(
+        trainingMethodology: TrainingMethodology,
+        uuidCharacteristic: UUID
+    ) = if (trainingMethodology == TrainingMethodology.FREE_TRAINING)
+        this.calculateMean(isMeanWithAbsValue = true)
+    else this.calculateMeanVBT(uuidCharacteristic)
+
+
+    private fun List<Entry>.calculateMeanVBT(
+        uuidCharacteristic: UUID
+    ) = when (uuidCharacteristic) {
+        BLE_VELOCITY_CHARACTERISTIC_UUID -> this.calculateVelocityOrPowerMeanConcentrica()
+        BLE_FORCE_CHARACTERISTIC_UUID -> this.calculateMeanForceConcentrica(
+            weightData.value ?: 0f
+        )
+        else -> this.calculateVelocityOrPowerMeanConcentrica()
+    }
+
+    private fun List<Entry>.calculateVelocityOrPowerMeanConcentrica(): Float {
+
+        var meanValue = 0f
+
+        val filteredValues = filter { it.y <= 0f }.map { it.y }
+        val totalValues = filteredValues.sum()
+
+        if (filteredValues.isNotEmpty())
+            meanValue = totalValues / filteredValues.size
+
+        return abs(meanValue)
+    }
+
+    private fun List<Entry>.calculateMeanForceConcentrica(weight: Float): Float {
+
+        val peso = weight * 9.81f
+
+        var meanForce = 0f
+
+        val filteredForce = map { it.y - peso }.filter { it >= 0f }.map { it + peso }
+        val totalForce = filteredForce.sum()
+
+        if (filteredForce.isNotEmpty())
+            meanForce = totalForce / filteredForce.size
+
+        return meanForce
     }
 }

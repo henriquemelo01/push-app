@@ -23,6 +23,7 @@ import com.example.pushapp.ui.workout.BluetoothHandlerViewModel.Companion.BLE_VE
 import com.example.pushapp.utils.flowObserver
 import com.example.pushapp.utils.setupStyle
 import com.example.pushapp.utils.showOnce
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -131,13 +132,18 @@ class WorkoutFragment : BluetoothHandlerFragment() {
 
         velocityEntries.observe(viewLifecycleOwner) { entries ->
 
+            val entryValues = entries.map { Entry(it.x, - it.y ) }
+
             binding.lcVelocityData.apply {
                 setupStyle(minValue = velocityMinValue, maxValue = velocityMaxValue)
 
                 visibility = if (entries.isNotEmpty()) View.VISIBLE else View.GONE
 
+//                val dataSet =
+//                    LineDataSet(entries, VELOCITY_CHART_SUBTITLES_LABEL).setupStyle(context)
+
                 val dataSet =
-                    LineDataSet(entries, VELOCITY_CHART_SUBTITLES_LABEL).setupStyle(context)
+                    LineDataSet(entryValues, VELOCITY_CHART_SUBTITLES_LABEL).setupStyle(context)
 
                 data = LineData(dataSet)
 
@@ -171,7 +177,7 @@ class WorkoutFragment : BluetoothHandlerFragment() {
         }
 
         powerData.observe(viewLifecycleOwner) {
-            binding.tvPowerData.text = getString(R.string.force_data_label, it)
+            binding.tvPowerData.text = getString(R.string.power_data_label, it)
             println("PowerData: $it")
             saveData(characteristicId = BLE_POWER_CHARACTERISTIC_UUID, data = it)
         }

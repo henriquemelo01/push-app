@@ -11,9 +11,11 @@ import androidx.navigation.fragment.navArgs
 import com.example.pushapp.NavigationDirections
 import com.example.pushapp.R
 import com.example.pushapp.databinding.FragmentDetailedReportBinding
+import com.example.pushapp.models.detailed_report.ReportVariables
 import com.example.pushapp.utils.flowObserver
 import com.example.pushapp.utils.setupStyle
 import com.example.pushapp.utils.showOnce
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,11 +92,29 @@ class DetailedReportFragment : Fragment() {
 
                     val lineColor = entry.key.graphLineColor
 
-                    val dataSet = LineDataSet(entry.value, chartId).setupStyle(
+                    // Inverter Velocidade, Offset e Potencia
+                    val signalInversionStatement =
+                        entry.key == ReportVariables.VELOCITY || entry.key == ReportVariables.POWER
+
+                    val entryValues =
+                        if (signalInversionStatement) entry.value.map {
+                            Entry(
+                                it.x,
+                                -it.y
+                            )
+                        } else entry.value
+
+                    val dataSet = LineDataSet(entryValues, chartId).setupStyle(
                         context = context,
                         lineColor = lineColor,
                         containsGradient = false
                     )
+
+//                    val dataSet = LineDataSet(entry.value, chartId).setupStyle(
+//                        context = context,
+//                        lineColor = lineColor,
+//                        containsGradient = false
+//                    )
 
                     if (index == 0)
                         data = LineData(dataSet)
