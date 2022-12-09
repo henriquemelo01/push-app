@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -12,6 +13,7 @@ import com.example.pushapp.NavigationDirections
 import com.example.pushapp.R
 import com.example.pushapp.databinding.FragmentDetailedReportBinding
 import com.example.pushapp.models.detailed_report.ReportVariables
+import com.example.pushapp.services.DownloadReportCsvHelper
 import com.example.pushapp.utils.flowObserver
 import com.example.pushapp.utils.setupStyle
 import com.example.pushapp.utils.showOnce
@@ -46,6 +48,20 @@ class DetailedReportFragment : Fragment() {
         setupListeners()
     }
 
+    private var downloadPermissionStatus = PermissionStatus.WAIT
+
+    enum class PermissionStatus {
+        ACCEPTED,
+        DENIED,
+        WAIT
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            downloadPermissionStatus =
+                if (it) PermissionStatus.ACCEPTED else PermissionStatus.DENIED
+        }
+
     private fun setupBind() = with(binding) {
 
         ivArrowLeft.setOnClickListener { requireActivity().onBackPressed() }
@@ -53,12 +69,34 @@ class DetailedReportFragment : Fragment() {
         ivReportGraphFilter.setOnClickListener {
             viewModel.triggerOpenFilterBottomSheetEvent()
         }
+
+        ivIconRight.setOnClickListener {
+            requestPermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            when (downloadPermissionStatus) {
+                PermissionStatus.ACCEPTED -> viewModel.onDownloadIconClick()
+                PermissionStatus.DENIED -> Toast.makeText(
+                    requireContext(),
+                    "Permission negada. Ative as permissões em configurações para utilizar o recurso",
+                    Toast.LENGTH_LONG
+                ).show()
+                else -> Toast.makeText(
+                    requireContext(),
+                    "Permissões verificadas. Clique novamente para baixar o relatório",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     private fun setupLiveData() = with(viewModel) {
 
         trainingMethod.observe(viewLifecycleOwner) {
             binding.tvHeader.text = getString(R.string.detailed_report_title, it)
+        }
+
+        downloadIconVisibility.observe(viewLifecycleOwner) {
+            binding.ivIconRight.visibility = if (it) View.VISIBLE else View.GONE
         }
 
         workoutWeight.observe(viewLifecycleOwner) {
@@ -156,6 +194,11 @@ class DetailedReportFragment : Fragment() {
                     viewModel.onApplyFilter(it.toMutableSet())
                 }
             }.showOnce(childFragmentManager)
+        }
+
+        flowObserver(onDownloadIconClickEvent) {
+            val downloadService = DownloadReportCsvHelper(requireContext())
+            downloadService.downloadReportCsvFile(it)
         }
     }
 

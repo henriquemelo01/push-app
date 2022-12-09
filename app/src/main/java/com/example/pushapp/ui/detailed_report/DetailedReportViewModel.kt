@@ -6,6 +6,7 @@ import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.detailed_report.AccesedBy
 import com.example.pushapp.models.detailed_report.ReportVariables
 import com.example.pushapp.services.PushAppRepository
+import com.example.pushapp.services.ReportCsvFile
 import com.example.pushapp.utils.toOffsetList
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +23,10 @@ class DetailedReportViewModel(
 
     val workoutWeight = liveData {
         emit(reportModel.weight)
+    }
+
+    val downloadIconVisibility = liveData {
+        emit(accessedBy == AccesedBy.HISTORY_FRAGMENT)
     }
 
     private val offsetEntries = reportModel.offsetMovements.toEntries()
@@ -95,6 +100,20 @@ class DetailedReportViewModel(
         )
     }
 
+    private val _onDownloadIconClickEvent = MutableSharedFlow<ReportCsvFile>()
+    val onDownloadIconClickEvent get() = _onDownloadIconClickEvent.asSharedFlow()
+
+    fun onDownloadIconClick() {
+        viewModelScope.launch {
+            _onDownloadIconClickEvent.emit(
+                ReportCsvFile(
+                    filename = "report_${reportModel.id}",
+                    url = "https://push-app-api.onrender.com/api/v1/reportCsvGenerator/" + reportModel.id
+                )
+            )
+        }
+    }
+
     fun onApplyFilter(reportVariables: MutableSet<ReportVariables>) {
 
         selectedFilters = reportVariables
@@ -154,8 +173,9 @@ class DetailedReportViewModel(
 
             val offsetList = it.value.toOffsetList()
 
-            val charMaxValue = if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
-                .maxValue() else offsetList.maxValue()
+            val charMaxValue =
+                if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                    .maxValue() else offsetList.maxValue()
 
             if (charMaxValue > maxValue)
                 maxValue = charMaxValue
@@ -172,8 +192,9 @@ class DetailedReportViewModel(
 
             val offsetList = it.value.toOffsetList()
 
-            val charMinValue = if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
-                .minValue() else offsetList.minValue()
+            val charMinValue =
+                if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                    .minValue() else offsetList.minValue()
 
             if (charMinValue < minValue)
                 minValue = charMinValue
