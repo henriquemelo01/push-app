@@ -38,3 +38,8 @@ build/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+firebase/
+.firebaserc
+firestore.rules
+google-services.json
