@@ -1,5 +1,3 @@
-## Overview
-
 <h1 align = "center" > <b> PushApp 💪🏋️‍♂️</b> </h1>
 
 <div >
