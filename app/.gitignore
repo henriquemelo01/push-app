@@ -6,14 +6,12 @@ bin/
 gen/
 
 # Ignore Gradle files
-.gradle/
 build/
 
 # configuration
 .iws
 .ipr
 .iml
-local.properties
 
 # built generated package files
 *.apk
