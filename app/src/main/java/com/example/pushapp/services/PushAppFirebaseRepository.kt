@@ -1,10 +1,12 @@
 package com.example.pushapp.services
 
+import android.util.Log
 import com.example.pushapp.models.CreateUserRequest
 import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.UserModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import java.util.*
 
@@ -91,19 +93,31 @@ class PushAppFirebaseRepository : PushAppRepository {
     override suspend fun getUserReports(userId: String): Result<List<ReportModel>> = try {
 
         val userReportDocuments =
-            reportCollection.whereEqualTo("userId", userId)
+            reportCollection.whereEqualTo("userId", userId).orderBy("createdAt", Query.Direction.DESCENDING)
 
         val reportsModel = userReportDocuments.get().await().toObjects(ReportModel::class.java)
 
         Result.success(reportsModel)
 
     } catch (e: Exception) {
+        Log.e("PushAppFirebaseRep", e.message.orEmpty())
         Result.failure(e)
     }
 
     override suspend fun deleteReportById(reportId: String) = try {
         reportCollection.document(reportId).delete().await()
         Result.success(reportId)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
+    override suspend fun updateReportIdentifierName(
+        reportId: String,
+        reportIdentifierName: String
+    ): Result<Unit> = try {
+        val updatedValue = mapOf("reportIdentifierName" to reportIdentifierName)
+        reportCollection.document(reportId).set(updatedValue, SetOptions.merge()).await()
+        Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(e)
     }

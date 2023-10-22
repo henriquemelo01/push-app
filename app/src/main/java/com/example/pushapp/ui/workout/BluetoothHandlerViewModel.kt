@@ -69,20 +69,20 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     protected val _velocityData = MutableLiveData<Float>()
     val velocityData: LiveData<Float> get() = _velocityData
 
-    private val _weightData = MutableLiveData<Int>()
-    val weightData: LiveData<Int> = _weightData
+    private val _weightData = MutableLiveData<Float>()
+    val weightData: LiveData<Float> = _weightData
 
     private val _offsetData = MutableLiveData<Int>()
     val offsetData: LiveData<Int> = _offsetData
 
-    private val _forceData = MutableLiveData<Int>()
-    val forceData: LiveData<Int> = _forceData
+    private val _forceData = MutableLiveData<Float>()
+    val forceData: LiveData<Float> = _forceData
 
     private val _accelerationData = MutableLiveData<Float>()
     val accelerationData: LiveData<Float> = _accelerationData
 
-    private val _powerData = MutableLiveData<Int>()
-    val powerData: LiveData<Int> = _powerData
+    private val _powerData = MutableLiveData<Float>()
+    val powerData: LiveData<Float> = _powerData
 
     fun onDiscoveredPeripheral(peripheral: BluetoothPeripheral) {
 
@@ -184,17 +184,18 @@ abstract class BluetoothHandlerViewModel : ViewModel() {
     fun notifyCharacteristicDataChange(characteristicId: UUID, data: ByteArray) {
         when (characteristicId) {
             BLE_VELOCITY_CHARACTERISTIC_UUID -> _velocityData.value = data.processFloatData()
-            BLE_WEIGHT_CHARACTERISTIC_UUID -> _weightData.value = data.processIntegerData()
+            BLE_WEIGHT_CHARACTERISTIC_UUID -> _weightData.value = data.processFloatData()
             BLE_OFFSET_CHARACTERISTIC_UUID -> _offsetData.value = data.processIntegerData()
             BLE_ACCELERATION_CHARACTERISTIC_UUID -> _accelerationData.value =
                 data.processFloatData()
-            BLE_FORCE_CHARACTERISTIC_UUID -> _forceData.value = data.processIntegerData()
-            BLE_POWER_CHARACTERISTIC_UUID -> _powerData.value = data.processIntegerData()
+            BLE_FORCE_CHARACTERISTIC_UUID -> _forceData.value = data.processFloatData()
+            BLE_POWER_CHARACTERISTIC_UUID -> _powerData.value = data.processFloatData()
         }
     }
 
     companion object {
-        const val ESP_32_MAC_ADDRESS = "CC:50:E3:95:BA:A2"
+//        const val ESP_32_MAC_ADDRESS = "CC:50:E3:95:BA:A2" // Prototipo
+        const val ESP_32_MAC_ADDRESS = "EC:62:60:93:6B:D6"
 
         val BLE_SERVICE_UUID: UUID = UUID.fromString("f8ab3678-b2b6-11ec-b909-0242ac120002")
         val SECOND_WORKOUT_BLE_SERVICE: UUID =

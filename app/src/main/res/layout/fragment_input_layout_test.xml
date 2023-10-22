@@ -12,12 +12,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivArrowLeft"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:tint="@color/black"
@@ -30,27 +31,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/ivIconRight"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivArrowLeft"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_goneMarginEnd="24dp"
             tools:text="Relatório Detalhado (VBT)" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivIconRight"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:tint="@color/black"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_download_outline"
-            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -63,27 +50,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvHeader">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivReportGraphFilter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:tint="@color/blue"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_filter" />
-
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lcVelocityData"
                 android:layout_width="0dp"
                 android:layout_height="250dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivReportGraphFilter"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -93,21 +68,21 @@
     <View
         android:id="@+id/separatorGraphTest"
         android:layout_width="0dp"
-        android:layout_height="2dp"
+        android:layout_height="16dp"
         android:background="@color/gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewGraph" />
 
-    <androidx.core.widget.NestedScrollView
+
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/separatorGraphTest">
+        android:layout_marginHorizontal="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/separatorGraphTest"
+        android:layout_marginTop="24dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -117,6 +92,7 @@
                 android:id="@+id/clCardWorkout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/shape_rounded_white"
                 android:elevation="2dp"
                 android:padding="24dp"
@@ -148,13 +124,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/spinner_exercise_label"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/llCardWorkout"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/spinner_exercise_label" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvExerciseData"
@@ -175,6 +151,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/shape_rounded_white"
                 android:elevation="2dp"
                 android:padding="24dp"
@@ -206,16 +183,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/weight"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/llWeightCard"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/weight" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvWorkoutWeight"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -223,7 +199,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/llWeightCard"
                     app:layout_constraintTop_toBottomOf="@id/tvCardWeight"
-                    tools:text="50 KG" />
+                    tools:text="50 kilogramas" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -263,13 +239,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/mean_velocity"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/llVelocityCard"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/mean_velocity" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvMeanVelocityData"
@@ -292,9 +268,9 @@
                 android:background="@drawable/shape_rounded_white"
                 android:elevation="2dp"
                 android:padding="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/clVelocity">
+                app:layout_constraintTop_toBottomOf="@id/clVelocity"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/llForceCard"
@@ -320,13 +296,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/mean_force"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/llForceCard"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/mean_force" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvMeanForceData"
@@ -346,14 +322,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
                 android:background="@drawable/shape_rounded_white"
                 android:elevation="2dp"
                 android:padding="24dp"
-                app:layout_constraintBottom_toTopOf="@id/btSaveReport"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/clForce">
+                app:layout_constraintTop_toBottomOf="@id/clForce"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="24dp">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/llPowerCard"
@@ -379,13 +355,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="@string/mean_power"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toEndOf="@id/llPowerCard"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/mean_power" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvMeanPowerData"
@@ -400,33 +376,11 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btSaveReport"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/shape_rounded_green"
-                android:text="@string/button_save_report"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toTopOf="@id/btDiscardReport"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btDiscardReport"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/shape_rounded_red"
-                android:text="@string/button_discard_report"
-                android:textColor="@color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

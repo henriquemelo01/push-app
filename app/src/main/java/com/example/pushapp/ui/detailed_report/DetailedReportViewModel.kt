@@ -6,12 +6,14 @@ import com.example.pushapp.models.ReportModel
 import com.example.pushapp.models.detailed_report.AccesedBy
 import com.example.pushapp.models.detailed_report.ReportVariables
 import com.example.pushapp.services.PushAppRepository
+import com.example.pushapp.services.ReportCsvFile
 import com.example.pushapp.utils.toOffsetList
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.math.abs
 
 class DetailedReportViewModel(
     private val reportModel: ReportModel,
@@ -21,6 +23,10 @@ class DetailedReportViewModel(
 
     val workoutWeight = liveData {
         emit(reportModel.weight)
+    }
+
+    val downloadIconVisibility = liveData {
+        emit(accessedBy == AccesedBy.HISTORY_FRAGMENT)
     }
 
     private val offsetEntries = reportModel.offsetMovements.toEntries()
@@ -42,11 +48,15 @@ class DetailedReportViewModel(
     }
 
     val meanVelocity = liveData {
-        emit(reportModel.meanVelocity)
+        emit(
+            abs(reportModel.meanVelocity)
+        )
     }
 
     val meanPower = liveData {
-        emit(reportModel.meanPower)
+        emit(
+            abs(reportModel.meanPower)
+        )
     }
 
     val meanForce = liveData {
@@ -88,6 +98,20 @@ class DetailedReportViewModel(
             ReportVariables.FORCE,
             ReportVariables.POWER
         )
+    }
+
+    private val _onDownloadIconClickEvent = MutableSharedFlow<ReportCsvFile>()
+    val onDownloadIconClickEvent get() = _onDownloadIconClickEvent.asSharedFlow()
+
+    fun onDownloadIconClick() {
+        viewModelScope.launch {
+            _onDownloadIconClickEvent.emit(
+                ReportCsvFile(
+                    filename = "report_${reportModel.id}",
+                    url = "https://push-app-api.onrender.com/api/v1/reportCsvGenerator/" + reportModel.id
+                )
+            )
+        }
     }
 
     fun onApplyFilter(reportVariables: MutableSet<ReportVariables>) {
@@ -139,10 +163,20 @@ class DetailedReportViewModel(
 
     private fun List<Offset>.minValue(): Float = map { it.value }.minOrNull() ?: 0f
 
+
     fun getSelectedFilterEntriesMaxValue(): Float {
         var maxValue = 0f
         _selectedFilterEntries.value?.entries?.forEach {
-            val charMaxValue = it.value.toOffsetList().maxValue()
+
+            val signalInversionStatement =
+                it.key == ReportVariables.VELOCITY || it.key == ReportVariables.POWER
+
+            val offsetList = it.value.toOffsetList()
+
+            val charMaxValue =
+                if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                    .maxValue() else offsetList.maxValue()
+
             if (charMaxValue > maxValue)
                 maxValue = charMaxValue
         }
@@ -152,10 +186,39 @@ class DetailedReportViewModel(
     fun getSelectedFilterEntriesMinValue(): Float {
         var minValue = 0f
         _selectedFilterEntries.value?.entries?.forEach {
-            val charMinValue = it.value.toOffsetList().minValue()
+
+            val signalInversionStatement =
+                it.key == ReportVariables.VELOCITY || it.key == ReportVariables.POWER
+
+            val offsetList = it.value.toOffsetList()
+
+            val charMinValue =
+                if (signalInversionStatement) offsetList.map { it.copy(value = -it.value) }
+                    .minValue() else offsetList.minValue()
+
             if (charMinValue < minValue)
                 minValue = charMinValue
         }
         return minValue
     }
+
+//    fun getSelectedFilterEntriesMaxValue(): Float {
+//        var maxValue = 0f
+//        _selectedFilterEntries.value?.entries?.forEach {
+//            val charMaxValue = it.value.toOffsetList().maxValue()
+//            if (charMaxValue > maxValue)
+//                maxValue = charMaxValue
+//        }
+//        return maxValue
+//    }
+//
+//    fun getSelectedFilterEntriesMinValue(): Float {
+//        var minValue = 0f
+//        _selectedFilterEntries.value?.entries?.forEach {
+//            val charMinValue = it.value.toOffsetList().minValue()
+//            if (charMinValue < minValue)
+//                minValue = charMinValue
+//        }
+//        return minValue
+//    }
 }

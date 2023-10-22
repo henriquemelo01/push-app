@@ -34,7 +34,7 @@ class TrainingConfigurationViewModel(
     }
 
     val availableExercises = liveData {
-        emit(listOf(Exercise.NONE.value, Exercise.SMITH_MACHINE.value))
+        emit(listOf(Exercise.SMITH_MACHINE.value)) // removido - 21:56
     }
 
     private val _enableStartButton = MutableLiveData(false)
@@ -83,7 +83,7 @@ class TrainingConfigurationViewModel(
 
     fun checkIfButtonStartIsEnable() {
         val isButtonStartEnable =
-            (!selectedExercise.isEmpty() && !selectedTrainingMethod.isEmpty()) && (weight != 0 && numberOfSets != 0)
+            !selectedExercise.isEmpty() && !selectedTrainingMethod.isEmpty()
 
         _enableStartButton.value = isButtonStartEnable
     }
@@ -96,8 +96,6 @@ class TrainingConfigurationViewModel(
             WorkoutConfigurationModel(
                 exercise = Exercise.getByValue(selectedExercise),
                 trainingMethodology = TrainingMethodology.getByValue(selectedTrainingMethod),
-                weight = weight,
-                numberOfSets = numberOfSets
             )
         )
     }
