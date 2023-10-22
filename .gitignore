@@ -6,21 +6,22 @@ bin/
 gen
 
 # Ignore Gradle files
-.gradle/
+#.gradle/
 build/
-app/build.gradle
-gradle/
-gradlew
-gradlew.bat
-settings.gradle
-gradle.properties
-*.gradle
+#app/build.gradle
+#gradle/
+#gradlew
+#gradlew.bat
+#settings.gradle
+#gradle.properties
+#*.gradle
+.gradle/
 
 # configuration
 .iws
 .ipr
 .iml
-local.properties
+#local.properties
 
 # built generated package files
 *.apk
