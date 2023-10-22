@@ -8,11 +8,16 @@ interface PushAppRepository {
 
     suspend fun saveCreatedUserData(user: CreateUserRequest): Result<UserModel>
 
-    suspend fun getUser(userId: String) : Result<UserModel>
+    suspend fun getUser(userId: String): Result<UserModel>
 
     suspend fun getUserReports(userId: String): Result<List<ReportModel>>
 
     suspend fun saveReport(report: ReportModel): Result<ReportModel>
 
-    suspend fun deleteReportById(reportId: String) : Result<String>
+    suspend fun deleteReportById(reportId: String): Result<String>
+
+    suspend fun updateReportIdentifierName(
+        reportId: String,
+        reportIdentifierName: String
+    ): Result<Unit>
 }
