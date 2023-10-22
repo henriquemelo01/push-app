@@ -28,4 +28,6 @@ O PushApp consiste em uma aplicação Android desenvolvida para o trabalho de co
     <li>MpChart </li>
 </ul>
 
+## Demo
+![](https://github.com/henriquemelo01/push-app/blob/main/push-app-demo.gif)
 
